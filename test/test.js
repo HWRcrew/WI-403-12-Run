@@ -1,6 +1,6 @@
-test( "hello test", function() {
+test( "sample-test", function() {
   ok( 1 == "1", "Passed!" );
 });
-test( "hello test fail", function() {
+test( "sample-test fail", function() {
   ok( 1 == "2", "Failed!" );
 });
