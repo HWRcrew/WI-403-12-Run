@@ -50,30 +50,30 @@ $(function() {
     }
     var tiles = [
         new gf.animation({
-            url: "tiles.png"
+            url: "kleines_tileset.png"
         }),
         new gf.animation({
-            url: "tiles.png",
+            url: "kleines_tileset.png",
             offset: 70
         }),
         new gf.animation({
-            url: "tiles.png",
+            url: "kleines_tileset.png",
             offset: 140
         }),
         new gf.animation({
-            url: "tiles.png",
+            url: "kleines_tileset.png",
             offset: 210
         }),
         new gf.animation({
-            url: "tiles.png",
+            url: "kleines_tileset.png",
             offset: 280
         }),
         new gf.animation({
-            url: "tiles.png",
+            url: "kleines_tileset.png",
             offset: 350
         }),
         new gf.animation({
-            url: "tiles.png",
+            url: "kleines_tileset.png",
             offset: 490
         }),
     ];
