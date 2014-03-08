@@ -20,6 +20,11 @@ SpriteImage.src = "sprite.png";
 // TODO Maps
 // TODO Game-Ending / Flag finish? How to check
 // TODO DB - Input with Highscores
+/*
+ * Notes:
+ * The bitwise OR operation ( | 0) does the same thing as Math.floor, but is faster. -> implement
+ */
+
 
 /* 
  * holds the keys that are currently pressed for the client, the server gets only the key and handles his own KeysPressed variable
@@ -38,7 +43,6 @@ var KeysPressed = 0;
 document.addEventListener("keydown", function(key) {
     // bool to check if we transmit the input
     var Transmit = false;
-    console.log("keydown" + key.which);
     // check if the key is * and is not already pressed
     if (key.which == 38 && (KeysPressed & 1) == 0) {
         // UP
