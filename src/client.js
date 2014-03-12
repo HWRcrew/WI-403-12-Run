@@ -150,21 +150,22 @@ window.addEventListener("load", function() {
                 MyPlayer.friction = 1;
             }
             // not up or not down 
-            if (KeysPressed == 2 || KeysPressed == 4 || KeysPressed == 6) {
-                MyPlayer.accelerationY = 0;
-            }
+            // if (KeysPressed == 2 || KeysPressed == 4 || KeysPressed == 6) {
+            //     MyPlayer.accelerationY = 0;
+            // }
             // not right or not left
             if (KeysPressed == 1 || KeysPressed == 8 || KeysPressed == 9) {
                 MyPlayer.accelerationX = 0;
             }
             // no key pressed
             if (KeysPressed == 0) {
-                MyPlayer.friction = 0.9;
+                MyPlayer.friction = 0.8;
                 MyPlayer.accelerationY = 0;
                 MyPlayer.accelerationX = 0;
             }
-            RunGameFrame(Players);
+            // RunGameFrame(Players);
             DrawGame();
+
         }, GlobalProperties.GameFrameTime);
     };
     // message from server

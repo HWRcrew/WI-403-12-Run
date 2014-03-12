@@ -22,7 +22,7 @@ var playerObject = {
     accelerationX: 0,
     accelerationY: 0,
     speedLimit: 5,
-    friction: 0.9,
+    friction: 0.8,
     bounce: -0.7,
     gravity: 0.6,
     isOnGround: undefined,
@@ -47,7 +47,11 @@ var playerObject = {
 // TODO RunGameFrame
 function RunGameFrame(Players) {
     for (var i = 0; i < Players.length; i++) {
-        // Speedlimit
+        //Apply the acceleration
+        Players[i].vx += Players[i].accelerationX;
+        Players[i].vy += Players[i].accelerationY;
+
+        // Speedlimit Acceleration has to be applied before this one
         if (Players[i].vx > Players[i].speedLimit) {
             Players[i].vx = Players[i].speedLimit;
         }
@@ -57,16 +61,15 @@ function RunGameFrame(Players) {
         if (Players[i].vy > Players[i].speedLimit * 2) {
             Players[i].vy = Players[i].speedLimit * 2;
         }
-        //Apply the acceleration
-        Players[i].vx += Players[i].accelerationX;
-        Players[i].vy += Players[i].accelerationY;
 
         //Apply friction
         if (Players[i].isOnGround) {
             Players[i].vx *= Players[i].friction;
         }
         //Apply gravity
-        Players[i].vy += Players[i].gravity;
+        if (!Players[i].isOnGround) {
+            Players[i].vy += Players[i].gravity;
+        }
 
         // move Player | apply velocity to player
         Players[i].x += Players[i].vx;
@@ -74,7 +77,6 @@ function RunGameFrame(Players) {
 
         // Limit for Canvas and bounce effect
         // Left
-        // TODO check
         if (Players[i].x < 0) {
             // Players[i].vx *= Players[i].bounce;
             Players[i].x = 0;

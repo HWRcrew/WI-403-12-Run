@@ -155,16 +155,16 @@ setInterval(function() {
             Connections[ID].Player.friction = 1;
         }
         // not up or not down 
-        if (Connections[ID].KeysPressed == 2 || Connections[ID].KeysPressed == 4 || Connections[ID].KeysPressed == 6) {
-            Connections[ID].Player.accelerationY = 0;
-        }
+        // if (Connections[ID].KeysPressed == 2 || Connections[ID].KeysPressed == 4 || Connections[ID].KeysPressed == 6) {
+        //     Connections[ID].Player.accelerationY = 0;
+        // }
         // not right or not left
         if (Connections[ID].KeysPressed == 1 || Connections[ID].KeysPressed == 8 || Connections[ID].KeysPressed == 9) {
             Connections[ID].Player.accelerationX = 0;
         }
         // no key pressed
         if (Connections[ID].KeysPressed == 0) {
-            Connections[ID].Player.friction = 0.9;
+            Connections[ID].Player.friction = 0.8;
             Connections[ID].Player.gravity = 0.6;
             Connections[ID].Player.accelerationY = 0;
             Connections[ID].Player.accelerationX = 0;
