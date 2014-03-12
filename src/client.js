@@ -6,14 +6,13 @@ var Connection = null;
 var GameLoop = null;
 var Players = [];
 var MyPlayer = null;
-
+var KeysPressed = 0;
 var SpriteImage = new Image();
 SpriteImage.src = "sprite.png";
 
 /**
  * ToDos
  */
-// TODO Collision
 // TODO Lobbies
 // TODO Time Tracking
 // TODO Animationmovement drawImage sy sx sw sh
@@ -24,7 +23,6 @@ SpriteImage.src = "sprite.png";
  * Notes:
  * The bitwise OR operation ( | 0) does the same thing as Math.floor, but is faster. -> implement
  */
-
 
 /* 
  * holds the keys that are currently pressed for the client, the server gets only the key and handles his own KeysPressed variable
@@ -38,7 +36,7 @@ SpriteImage.src = "sprite.png";
  * right and left 0110
  * none 0000
  */
-var KeysPressed = 0;
+
 // Input-Handling
 document.addEventListener("keydown", function(key) {
     // bool to check if we transmit the input
@@ -100,7 +98,7 @@ document.addEventListener("keyup", function(key) {
 });
 // window load
 window.addEventListener("load", function() {
-    var GameCanvas = document.getElementById("gamecanvas");
+    var GameCanvas = document.querySelector("canvas");
     GameCanvas.width = GlobalProperties.GameWidth;
     GameCanvas.height = GlobalProperties.GameHeight;
     GraphicsContext = GameCanvas.getContext("2d");
@@ -116,7 +114,6 @@ window.addEventListener("load", function() {
     // event handler for WebSocket
     // open of connection
     Connection.onopen = function() {
-        // TODO what to do on open connection??
         // prompt for name and send to server (max length 16 chars)
         if (Connection && Connection.readyState == 1) {
             var name = window.prompt("Tell me your name...");
@@ -125,28 +122,48 @@ window.addEventListener("load", function() {
                 Data: name.substring(0, 16)
             }))
         }
-        // Updating the game in an interval - game loop
+        // Updating the gamestate in an interval - game loop
         GameLoop = setInterval(function() {
             /* 
              * handle keyinput and move player
              * again with bitwise operators
              */
             // UP
-            if (KeysPressed & 1) {
-                MyPlayer.PosY -= 8;
+            if (KeysPressed & 1 && MyPlayer.isOnGround) {
+                MyPlayer.vy += MyPlayer.jumpForce;
+                MyPlayer.isOnGround = false;
+                MyPlayer.friction = 1;
             }
             // LEFT
             if (KeysPressed & 2) {
-                MyPlayer.PosX -= 8;
+                MyPlayer.accelerationX -= 0.2;
+                MyPlayer.friction = 1;
             }
             // RIGHT
             if (KeysPressed & 4) {
-                MyPlayer.PosX += 8;
+                MyPlayer.accelerationX += 0.2;
+                MyPlayer.friction = 1;
             }
             // DOWN
             if (KeysPressed & 8) {
-                MyPlayer.PosY += 8;
+                MyPlayer.accelerationY += 0.2;
+                MyPlayer.friction = 1;
             }
+            // not up or not down 
+            if (KeysPressed == 2 || KeysPressed == 4 || KeysPressed == 6) {
+                MyPlayer.accelerationY = 0;
+            }
+            // not right or not left
+            if (KeysPressed == 1 || KeysPressed == 8 || KeysPressed == 9) {
+                MyPlayer.accelerationX = 0;
+            }
+            // no key pressed
+            if (KeysPressed == 0) {
+                MyPlayer.friction = 0.9;
+                MyPlayer.accelerationY = 0;
+                MyPlayer.accelerationX = 0;
+            }
+            RunGameFrame(Players);
             DrawGame();
         }, GlobalProperties.GameFrameTime);
     };
@@ -182,18 +199,18 @@ window.addEventListener("load", function() {
 function DrawGame() {
     // Clear the screen
     GraphicsContext.clearRect(0, 0, GlobalProperties.GameWidth, GlobalProperties.GameHeight);
-    // Set font
+    // Set font for Playername
     GraphicsContext.font = "8pt Arial";
     // draw every player
     for (var i = 0; i < Players.length; i++) {
-        GraphicsContext.drawImage(SpriteImage, Players[i].PosX, Players[i].PosY);
+        GraphicsContext.drawImage(SpriteImage, Players[i].x, Players[i].y);
         // draw Name above every Player
         if (Players[i].Name) {
             // Decide wether it is me or someone else
             if (Players[i] == MyPlayer) {
-                GraphicsContext.fillText("Le Me", Players[i].PosX, Players[i].PosY);
+                GraphicsContext.fillText("Le Me", Players[i].x, Players[i].y);
             } else {
-                GraphicsContext.fillText(Players[i].Name, Players[i].PosX, Players[i].PosY);
+                GraphicsContext.fillText(Players[i].Name, Players[i].x, Players[i].y);
             }
         }
     }

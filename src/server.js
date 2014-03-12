@@ -20,8 +20,9 @@ HTTPServer.listen(port, function() {
 // create WebSocketServer from HTTPServer
 var Server = new WebSocketServer({
     httpServer: HTTPServer,
-    closeTimeout: 2000
+    closeTimeout: 6000
 });
+
 
 // ACTION
 // first request from a client
@@ -34,6 +35,7 @@ Server.on("request", function(request) {
     } while (Connection.ID in Connections);
     // add Connection to Connections
     Connections[Connection.ID] = Connection;
+    // check the most sametime connections for logging
     if (MostConcurrentConnections < ConnectionsSize()) {
         MostConcurrentConnections = ConnectionsSize();
     }
@@ -42,15 +44,12 @@ Server.on("request", function(request) {
     // on message
     Connection.on("message", function(message) {
         if (message.type == "utf8") {
-            // TODO what to do on a message
-
             // get message data and parse to JSON
             try {
                 message = JSON.parse(message.utf8Data);
             } catch (error) {
                 console.error((new Date()) + " JSON parsing error: ", error);
             }
-
             /* differentiate between message-types
              * TYPES:
              * handshake
@@ -64,23 +63,20 @@ Server.on("request", function(request) {
             switch (message.Type) {
                 case "handshake":
                     console.info((new Date()) + " IP " + (Connection.IP).green + " - handshake with: " + (message.Data).toString().blue);
-                    // TODO add name to player
                     // abort if Connection already spawned a player
                     if (Connection.Player) {
                         break;
                     }
                     // create Player at random position in Canvas
-                    Connection.Player = {
-                        PosX: Math.floor(Math.random() * (Game.GlobalProperties.GameWidth - 32)),
-                        PosY: Math.floor(Math.random() * (Game.GlobalProperties.GameHeight - 47)),
-                        Name: message.Data.toString().substring(0, 16)
-                    }
+                    Connection.Player = Object.create(Game.playerObject);
+                    Connection.Player.x = Math.floor(Math.random() * (Game.GlobalProperties.GameWidth - 32));
+                    Connection.Player.y = Math.floor(Math.random() * (Game.GlobalProperties.GameHeight - 47));
+                    Connection.Player.Name = message.Data.toString().substring(0, 16);
+
                     // initial KeysPressed on serverside
                     Connection.KeysPressed = 0;
-                    // TODO send gamestate
                     break;
                 case "keydown":
-                    // console.info("Keydown: " + (message.Data).toString().red);
                     if (message.Data == 38) {
                         // UP
                         Connection.KeysPressed |= 1;
@@ -96,7 +92,6 @@ Server.on("request", function(request) {
                     }
                     break;
                 case "keyup":
-                    // console.info("Keyup: " + (message.Data).toString().red);
                     if (message.Data == 38) {
                         // UP
                         Connection.KeysPressed &= ~1;
@@ -139,23 +134,44 @@ setInterval(function() {
         }
         Players.push(Connections[ID].Player);
         // UP
-        if (Connections[ID].KeysPressed & 1) {
-            Connections[ID].Player.PosY -= 8;
+        if (Connections[ID].KeysPressed & 1 && Connections[ID].Player.isOnGround) {
+            Connections[ID].Player.vy += Connections[ID].Player.jumpForce;
+            Connections[ID].Player.isOnGround = false;
+            Connections[ID].Player.friction = 1;
         }
         // LEFT
         if (Connections[ID].KeysPressed & 2) {
-            Connections[ID].Player.PosX -= 8;
+            Connections[ID].Player.accelerationX -= 0.2;
+            Connections[ID].Player.friction = 1;
         }
         // RIGHT
         if (Connections[ID].KeysPressed & 4) {
-            Connections[ID].Player.PosX += 8;
+            Connections[ID].Player.accelerationX += 0.2;
+            Connections[ID].Player.friction = 1;
         }
         // DOWN
         if (Connections[ID].KeysPressed & 8) {
-            Connections[ID].Player.PosY += 8;
+            Connections[ID].Player.accelerationY += 0.2;
+            Connections[ID].Player.friction = 1;
+        }
+        // not up or not down 
+        if (Connections[ID].KeysPressed == 2 || Connections[ID].KeysPressed == 4 || Connections[ID].KeysPressed == 6) {
+            Connections[ID].Player.accelerationY = 0;
+        }
+        // not right or not left
+        if (Connections[ID].KeysPressed == 1 || Connections[ID].KeysPressed == 8 || Connections[ID].KeysPressed == 9) {
+            Connections[ID].Player.accelerationX = 0;
+        }
+        // no key pressed
+        if (Connections[ID].KeysPressed == 0) {
+            Connections[ID].Player.friction = 0.9;
+            Connections[ID].Player.gravity = 0.6;
+            Connections[ID].Player.accelerationY = 0;
+            Connections[ID].Player.accelerationX = 0;
         }
     }
-    // run GameFrame for Collisions etc.
+    // Run GameFrame
+    Game.RunGameFrame(Players);
     // send gamestate
     SendGameState();
 }, Game.GlobalProperties.GameFrameTime);
