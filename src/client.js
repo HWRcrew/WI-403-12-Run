@@ -24,6 +24,13 @@ SpriteImage.src = "sprite.png";
  * The bitwise OR operation ( | 0) does the same thing as Math.floor, but is faster. -> implement
  */
 
+//Key codes
+var RIGHT = 39;
+var LEFT = 37;
+var UP = 38;
+var DOWN = 40;
+var SPACE = 32;
+
 /* 
  * holds the keys that are currently pressed for the client, the server gets only the key and handles his own KeysPressed variable
  * works with bitwise operators
@@ -47,11 +54,11 @@ document.addEventListener("keydown", function(key) {
         Transmit = true;
         // same as KeysPressed = KeysPressed | 1 (adds up 0001 to the current value)
         KeysPressed |= 1;
-    } else if (key.which == 37 && (KeysPressed & 2) == 0) {
+    } else if (key.which == 37 && (KeysPressed & 2) == 0 && (KeysPressed & 4) == 0) {
         // LEFT
         Transmit = true;
         KeysPressed |= 2
-    } else if (key.which == 39 && (KeysPressed & 4) == 0) {
+    } else if (key.which == 39 && (KeysPressed & 4) == 0 && (KeysPressed & 2) == 0) {
         // RIGHT
         Transmit = true;
         KeysPressed |= 4;
@@ -136,34 +143,35 @@ window.addEventListener("load", function() {
             }
             // LEFT
             if (KeysPressed & 2) {
-                MyPlayer.accelerationX -= 0.2;
+                MyPlayer.accelerationX = -0.2;
                 MyPlayer.friction = 1;
             }
             // RIGHT
             if (KeysPressed & 4) {
-                MyPlayer.accelerationX += 0.2;
+                MyPlayer.accelerationX = +0.2;
                 MyPlayer.friction = 1;
             }
             // DOWN
             if (KeysPressed & 8) {
-                MyPlayer.accelerationY += 0.2;
+                MyPlayer.accelerationY = +0.2;
                 MyPlayer.friction = 1;
             }
             // not up or not down 
-            // if (KeysPressed == 2 || KeysPressed == 4 || KeysPressed == 6) {
-            //     MyPlayer.accelerationY = 0;
-            // }
+            if (KeysPressed == 2 || KeysPressed == 4 || KeysPressed == 6) {
+                MyPlayer.accelerationY = 0;
+            }
             // not right or not left
             if (KeysPressed == 1 || KeysPressed == 8 || KeysPressed == 9) {
                 MyPlayer.accelerationX = 0;
             }
             // no key pressed
             if (KeysPressed == 0) {
-                MyPlayer.friction = 0.8;
+                MyPlayer.friction = 0.6;
                 MyPlayer.accelerationY = 0;
                 MyPlayer.accelerationX = 0;
             }
-            // RunGameFrame(Players);
+            // TODO @issue blinking on jump
+            RunGameFrame(Players);
             DrawGame();
 
         }, GlobalProperties.GameFrameTime);
@@ -192,7 +200,7 @@ window.addEventListener("load", function() {
             clearInterval(GameLoop);
         }
         GameLoop = null;
-        alert("WebSocket connection closed!");
+        document.body.innerHTML = "Connection closed!";
     };
 });
 
