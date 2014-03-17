@@ -72,7 +72,8 @@ Server.on("request", function(request) {
                     Connection.Player.x = Math.floor(Math.random() * (Game.GlobalProperties.GameWidth - 32));
                     Connection.Player.y = Math.floor(Math.random() * (Game.GlobalProperties.GameHeight - 47));
                     Connection.Player.Name = message.Data.toString().substring(0, 16);
-
+                    // flatten Object
+                    Connection.Player = flatten(Connection.Player);
                     // initial KeysPressed on serverside
                     Connection.KeysPressed = 0;
                     break;
@@ -82,10 +83,12 @@ Server.on("request", function(request) {
                         Connection.KeysPressed |= 1;
                     } else if (message.Data == 37) {
                         // LEFT
-                        Connection.KeysPressed |= 2
+                        Connection.KeysPressed |= 2;
+                        Connection.KeysPressed &= ~4;
                     } else if (message.Data == 39) {
                         // RIGHT
                         Connection.KeysPressed |= 4;
+                        Connection.KeysPressed &= ~2;
                     } else if (message.Data == 40) {
                         // DOWN
                         Connection.KeysPressed |= 8;
@@ -97,7 +100,7 @@ Server.on("request", function(request) {
                         Connection.KeysPressed &= ~1;
                     } else if (message.Data == 37) {
                         // LEFT
-                        Connection.KeysPressed &= ~2
+                        Connection.KeysPressed &= ~2;
                     } else if (message.Data == 39) {
                         // RIGHT
                         Connection.KeysPressed &= ~4;
@@ -141,17 +144,17 @@ setInterval(function() {
         }
         // LEFT
         if (Connections[ID].KeysPressed & 2) {
-            Connections[ID].Player.accelerationX = -0.2;
+            Connections[ID].Player.accelerationX = -0.4;
             Connections[ID].Player.friction = 1;
         }
         // RIGHT
         if (Connections[ID].KeysPressed & 4) {
-            Connections[ID].Player.accelerationX = +0.2;
+            Connections[ID].Player.accelerationX = +0.4;
             Connections[ID].Player.friction = 1;
         }
         // DOWN
-        if (Connections[ID].KeysPressed & 8) {
-            Connections[ID].Player.accelerationY = +0.2;
+        if (Connections[ID].KeysPressed & 8 && !Connections[ID].Player.isOnGround) {
+            Connections[ID].Player.accelerationY = +1;
             Connections[ID].Player.friction = 1;
         }
         // not up or not down 
@@ -164,7 +167,7 @@ setInterval(function() {
         }
         // no key pressed
         if (Connections[ID].KeysPressed == 0) {
-            Connections[ID].Player.friction = 0.6;
+            Connections[ID].Player.friction = Game.GlobalProperties.GameFriction;
             Connections[ID].Player.gravity = 0.6;
             Connections[ID].Player.accelerationY = 0;
             Connections[ID].Player.accelerationX = 0;
@@ -201,6 +204,14 @@ function SendGameState() {
         }));
     }
 };
+// Flatten Object for JSON.stringify
+function flatten(object) {
+    // var result = Object.create(object);
+    for (var key in object) {
+        object[key] = object[key];
+    }
+    return object;
+}
 
 // count number of Connections
 function ConnectionsSize() {

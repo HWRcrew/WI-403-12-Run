@@ -8,7 +8,9 @@ var Players = [];
 var MyPlayer = null;
 var KeysPressed = 0;
 var SpriteImage = new Image();
-SpriteImage.src = "sprite.png";
+SpriteImage.src = "images/sprite.png";
+var backgroundImage = new Image();
+backgroundImage.src = "images/background.png";
 
 /**
  * ToDos
@@ -24,12 +26,6 @@ SpriteImage.src = "sprite.png";
  * The bitwise OR operation ( | 0) does the same thing as Math.floor, but is faster. -> implement
  */
 
-//Key codes
-var RIGHT = 39;
-var LEFT = 37;
-var UP = 38;
-var DOWN = 40;
-var SPACE = 32;
 
 /* 
  * holds the keys that are currently pressed for the client, the server gets only the key and handles his own KeysPressed variable
@@ -57,11 +53,13 @@ document.addEventListener("keydown", function(key) {
     } else if (key.which == 37 && (KeysPressed & 2) == 0 && (KeysPressed & 4) == 0) {
         // LEFT
         Transmit = true;
-        KeysPressed |= 2
+        KeysPressed |= 2;
+        KeysPressed &= ~4;
     } else if (key.which == 39 && (KeysPressed & 4) == 0 && (KeysPressed & 2) == 0) {
         // RIGHT
         Transmit = true;
         KeysPressed |= 4;
+        KeysPressed &= ~2;
     } else if (key.which == 40 && (KeysPressed & 8) == 0) {
         // DOWN
         Transmit = true;
@@ -143,17 +141,18 @@ window.addEventListener("load", function() {
             }
             // LEFT
             if (KeysPressed & 2) {
-                MyPlayer.accelerationX = -0.2;
+                MyPlayer.accelerationX = -0.4;
                 MyPlayer.friction = 1;
             }
             // RIGHT
             if (KeysPressed & 4) {
-                MyPlayer.accelerationX = +0.2;
+                MyPlayer.accelerationX = +0.4;
                 MyPlayer.friction = 1;
             }
             // DOWN
-            if (KeysPressed & 8) {
-                MyPlayer.accelerationY = +0.2;
+            if (KeysPressed & 8 && !MyPlayer.isOnGround) {
+                MyPlayer.accelerationY = +1;
+                // set off friction
                 MyPlayer.friction = 1;
             }
             // not up or not down 
@@ -166,7 +165,7 @@ window.addEventListener("load", function() {
             }
             // no key pressed
             if (KeysPressed == 0) {
-                MyPlayer.friction = 0.6;
+                MyPlayer.friction = GlobalProperties.GameFriction;
                 MyPlayer.accelerationY = 0;
                 MyPlayer.accelerationX = 0;
             }
@@ -184,6 +183,12 @@ window.addEventListener("load", function() {
             console.error((new Date()) + " JSON parsing error: ", error);
         }
         Players = message.Players;
+        // need to make new Date out of stunStart, because of JSON.stringify / JSON.parse
+        for (var i = 0; i < Players.length; i++) {
+            if (Players[i].stunStart) {
+                Players[i].stunStart = new Date(Players[i].stunStart);
+            }
+        }
         // get own player
         if (message.MyID in Players) {
             MyPlayer = Players[message.MyID];
@@ -210,6 +215,7 @@ function DrawGame() {
     GraphicsContext.clearRect(0, 0, GlobalProperties.GameWidth, GlobalProperties.GameHeight);
     // Set font for Playername
     GraphicsContext.font = "8pt Arial";
+    GraphicsContext.drawImage(backgroundImage, 0, 0);
     // draw every player
     for (var i = 0; i < Players.length; i++) {
         GraphicsContext.drawImage(SpriteImage, Players[i].x, Players[i].y);
@@ -217,7 +223,7 @@ function DrawGame() {
         if (Players[i].Name) {
             // Decide wether it is me or someone else
             if (Players[i] == MyPlayer) {
-                GraphicsContext.fillText("Le Me", Players[i].x, Players[i].y);
+                GraphicsContext.fillText("Le Me " + Players[i].stunDuration, Players[i].x, Players[i].y);
             } else {
                 GraphicsContext.fillText(Players[i].Name, Players[i].x, Players[i].y);
             }
