@@ -68,9 +68,9 @@ Server.on("request", function(request) {
                         break;
                     }
                     // create Player at random position in Canvas
-                    Connection.Player = Object.create(Game.playerObject);
-                    Connection.Player.x = Math.floor(Math.random() * (Game.GlobalProperties.GameWidth - 32));
-                    Connection.Player.y = Math.floor(Math.random() * (Game.GlobalProperties.GameHeight - 47));
+                    Connection.Player = Object.create(Game.spriteObject);
+                    Connection.Player.x = Math.floor(Math.random() * (Game.GP.GameWidth - 32));
+                    Connection.Player.y = Math.floor(Math.random() * (Game.GP.GameHeight - 47));
                     Connection.Player.Name = message.Data.toString().substring(0, 16);
                     // flatten Object
                     Connection.Player = flatten(Connection.Player);
@@ -167,7 +167,7 @@ setInterval(function() {
         }
         // no key pressed
         if (Connections[ID].KeysPressed == 0) {
-            Connections[ID].Player.friction = Game.GlobalProperties.GameFriction;
+            Connections[ID].Player.friction = Game.GP.GameFriction;
             Connections[ID].Player.gravity = 0.6;
             Connections[ID].Player.accelerationY = 0;
             Connections[ID].Player.accelerationX = 0;
@@ -177,7 +177,7 @@ setInterval(function() {
     Game.RunGameFrame(Players);
     // send gamestate
     SendGameState();
-}, Game.GlobalProperties.GameFrameTime);
+}, Game.GP.GameFrameTime);
 
 /*
  * helper functions

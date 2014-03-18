@@ -1,37 +1,41 @@
-var GlobalProperties = {
+var GP = {
     GameWidth: 768,
     GameHeight: 384,
     // GameFrameTime in milliseconds
     GameFrameTime: 30,
     GameFriction: 0.8,
+    GameGravity: 0.6,
+    GameBounce: -0.7
 };
-var playerObject = {
-    Name: null,
-    Time: 0,
-    stunDuration: 0,
-    stunTime: 0,
-    stunStart: null,
-    // values for getting image from spritesheet
+var spriteObject = {
+    // properties for everyone
     sourceX: 0,
     sourceY: 0,
     sourceWidth: 0,
     sourceHeight: 0,
-    // size in the game
     width: 32,
     height: 47,
     x: 0,
     y: 0,
+    // properties for moving objects
     vx: 0,
     vy: 0,
-    // physical properties
+    // properties for players
     accelerationX: 0,
     accelerationY: 0,
     speedLimit: 5,
-    friction: GlobalProperties.GameFriction,
-    bounce: -0.7,
-    gravity: 0.6,
+    friction: GP.GameFriction,
+    bounce: GP.GameBounce,
+    gravity: GP.GameGravity,
     isOnGround: undefined,
-    jumpForce: -10
+    jumpForce: -10,
+    Name: null,
+    // Time for a map in seconds
+    Time: 0,
+    // stunDuration in seconds
+    stunDuration: 0,
+    stunTime: 0,
+    stunStart: null
 };
 // getters for objects
 var centerX = function(object) {
@@ -116,14 +120,14 @@ function RunGameFrame(Players) {
             Players[i].y = 0;
         }
         //Right
-        if ((Players[i].x + Players[i].width) > GlobalProperties.GameWidth) {
+        if ((Players[i].x + Players[i].width) > GP.GameWidth) {
             Players[i].vx *= Players[i].bounce;
-            Players[i].x = GlobalProperties.GameWidth - Players[i].width;
+            Players[i].x = GP.GameWidth - Players[i].width;
         }
         //Bottom
-        if ((Players[i].y + Players[i].height) > GlobalProperties.GameHeight) {
+        if ((Players[i].y + Players[i].height) > GP.GameHeight) {
             // repositioning
-            Players[i].y = GlobalProperties.GameHeight - Players[i].height;
+            Players[i].y = GP.GameHeight - Players[i].height;
             Players[i].isOnGround = true;
             Players[i].vy = 0;
         }
@@ -143,7 +147,7 @@ function collisionDetection(o1, o2, bounce) {
     var vectorY = centerY(o1) - centerY(o2);
 
     // combined half-widths and half-heights
-    var combinedHalfWidths = halfWidth(o1) + halfHeight(o2);
+    var combinedHalfWidths = halfWidth(o1) + halfWidth(o2);
     var combinedHalfHeights = halfHeight(o1) + halfHeight(o2);
     // check for collision side
     if (Math.abs(vectorX) < combinedHalfWidths) {
@@ -215,8 +219,8 @@ function buildMap(mapArray) {
 
 // Export for server.js
 if (typeof exports !== "undefined") {
-    exports.GlobalProperties = GlobalProperties;
-    exports.playerObject = playerObject;
+    exports.GP = GP;
+    exports.spriteObject = spriteObject;
     exports.RunGameFrame = RunGameFrame;
     exports.centerX = centerX;
 }

@@ -104,8 +104,8 @@ document.addEventListener("keyup", function(key) {
 // window load
 window.addEventListener("load", function() {
     var GameCanvas = document.querySelector("canvas");
-    GameCanvas.width = GlobalProperties.GameWidth;
-    GameCanvas.height = GlobalProperties.GameHeight;
+    GameCanvas.width = GP.GameWidth;
+    GameCanvas.height = GP.GameHeight;
     GraphicsContext = GameCanvas.getContext("2d");
     // use MozWebSocket if provided by firefox
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -165,7 +165,7 @@ window.addEventListener("load", function() {
             }
             // no key pressed
             if (KeysPressed == 0) {
-                MyPlayer.friction = GlobalProperties.GameFriction;
+                MyPlayer.friction = GP.GameFriction;
                 MyPlayer.accelerationY = 0;
                 MyPlayer.accelerationX = 0;
             }
@@ -173,7 +173,7 @@ window.addEventListener("load", function() {
             RunGameFrame(Players);
             DrawGame();
 
-        }, GlobalProperties.GameFrameTime);
+        }, GP.GameFrameTime);
     };
     // message from server
     Connection.onmessage = function(message) {
@@ -212,7 +212,7 @@ window.addEventListener("load", function() {
 // Function for drawing of the current Game-State
 function DrawGame() {
     // Clear the screen
-    GraphicsContext.clearRect(0, 0, GlobalProperties.GameWidth, GlobalProperties.GameHeight);
+    GraphicsContext.clearRect(0, 0, GP.GameWidth, GP.GameHeight);
     // Set font for Playername
     GraphicsContext.font = "8pt Arial";
     GraphicsContext.drawImage(backgroundImage, 0, 0);
