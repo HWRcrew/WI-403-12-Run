@@ -4,7 +4,6 @@ var WebSocketUrl = "ws://localhost:1337";
 var Connection = null;
 // stores ID of interval (gameloop) to stop it later on
 var GameLoop = null;
-var Players = [];
 var MyPlayer = null;
 var KeysPressed = 0;
 var SpriteImage = new Image();
@@ -170,7 +169,7 @@ window.addEventListener("load", function() {
                 MyPlayer.accelerationX = 0;
             }
             // TODO @issue blinking on jump
-            RunGameFrame(Players);
+            RunGameFrame(Sprites.Players);
             DrawGame();
 
         }, GP.GameFrameTime);
@@ -182,16 +181,16 @@ window.addEventListener("load", function() {
         } catch (error) {
             console.error((new Date()) + " JSON parsing error: ", error);
         }
-        Players = message.Players;
+        Sprites = message.Sprites;
         // need to make new Date out of stunStart, because of JSON.stringify / JSON.parse
-        for (var i = 0; i < Players.length; i++) {
-            if (Players[i].stunStart) {
-                Players[i].stunStart = new Date(Players[i].stunStart);
+        for (var i = 0; i < Sprites.Players.length; i++) {
+            if (Sprites.Players[i].stunStart) {
+                Sprites.Players[i].stunStart = new Date(Sprites.Players[i].stunStart);
             }
         }
         // get own player
-        if (message.MyID in Players) {
-            MyPlayer = Players[message.MyID];
+        if (message.MyID in Sprites.Players) {
+            MyPlayer = Sprites.Players[message.MyID];
         }
     };
     // error of connection
@@ -217,15 +216,15 @@ function DrawGame() {
     GraphicsContext.font = "8pt Arial";
     GraphicsContext.drawImage(backgroundImage, 0, 0);
     // draw every player
-    for (var i = 0; i < Players.length; i++) {
-        GraphicsContext.drawImage(SpriteImage, Players[i].x, Players[i].y);
+    for (var i = 0; i < Sprites.Players.length; i++) {
+        GraphicsContext.drawImage(SpriteImage, Sprites.Players[i].x, Sprites.Players[i].y);
         // draw Name above every Player
-        if (Players[i].Name) {
+        if (Sprites.Players[i].Name) {
             // Decide wether it is me or someone else
-            if (Players[i] == MyPlayer) {
-                GraphicsContext.fillText("Le Me " + Players[i].stunDuration, Players[i].x, Players[i].y);
+            if (Sprites.Players[i] == MyPlayer) {
+                GraphicsContext.fillText("Le Me " + Sprites.Players[i].stunDuration, Sprites.Players[i].x, Sprites.Players[i].y);
             } else {
-                GraphicsContext.fillText(Players[i].Name, Players[i].x, Players[i].y);
+                GraphicsContext.fillText(Sprites.Players[i].Name, Sprites.Players[i].x, Sprites.Players[i].y);
             }
         }
     }
