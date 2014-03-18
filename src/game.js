@@ -200,6 +200,22 @@ function collisionDetection(o1, o2, bounce) {
  * MapCode
  */
 var EMPTY = 0;
+
+//TODO: Namen für Variablen herausfinden!
+var BLOCK1 = 1;
+var BLOCK2 = 41;
+var BLOCK3 = 42;
+var BlOCK4 = 43;
+var BLOCK5 = 44;
+var BLOCK6 = 45;
+var BLOCK7 = 46;
+var BLOCK8 = 47;
+var BLOCK9 = 48;
+
+
+var collisionObjects = [];
+var killObjects = [];
+
 /**
  * mapbuilder
  */
@@ -213,6 +229,14 @@ function buildMap(mapArray) {
                 continue;
             }
             // TODO build map
+            if (currentTile == BLOCK1) {
+                var BLOCK1 = Object.create(spriteObject);
+                BLOCK1.sourceX = tileSheetX;
+                BLOCK1.sourceY = tileSheetY;
+                BLOCK1.x = column * SIZE;
+                BLOCK1.y = row * SIZE;
+                sprites.push(BLOCK1);
+            }
         }
     }
 };
