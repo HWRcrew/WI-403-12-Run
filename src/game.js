@@ -206,15 +206,15 @@ function collisionDetection(o1, o2, bounce) {
 var EMPTY = 0;
 
 //TODO: Namen für Variablen herausfinden!
-var BLOCK1 = 1;
-var BLOCK2 = 41;
-var BLOCK3 = 42;
-var BlOCK4 = 43;
-var BLOCK5 = 44;
-var BLOCK6 = 45;
-var BLOCK7 = 46;
-var BLOCK8 = 47;
-var BLOCK9 = 48;
+var GROUNDROUND = 1;
+var GROUNDLEFTROUND = 2;
+var GROUNDSTRAIGHT = 3;
+var GROUNDRIGHTROUND = 4;
+var EXIT = 5;
+var DOORBOTTOM = 6;
+var DOORTOP = 7;
+var WATER = 8;
+var ARROW = 9;
 
 
 var collisionObjects = [];
@@ -232,14 +232,82 @@ function buildMap(mapArray) {
             if (currentTile == EMPTY) {
                 continue;
             }
+
+            var tileSheetX = Math.floor((currentTile - 1) % tilesheetColumns) * SIZE;
+            var tileSheetY = Math.floor((currentTile - 1) / tilesheetColumns) * SIZE;
+            
             // TODO build map
-            if (currentTile == BLOCK1) {
-                var BLOCK1 = Object.create(spriteObject);
-                BLOCK1.sourceX = tileSheetX;
-                BLOCK1.sourceY = tileSheetY;
-                BLOCK1.x = column * SIZE;
-                BLOCK1.y = row * SIZE;
-                sprites.push(BLOCK1);
+            if (currentTile == GROUNDROUND) {
+                var groundround = Object.create(spriteObject);
+                groundround.sourceX = tileSheetX;
+                groundround.sourceY = tileSheetY;
+                groundround.x = column * SIZE;
+                groundround.y = row * SIZE;
+                sprites.push(groundround);
+            }
+            if (currentTile == GROUNDLEFTROUND) {
+                var groundleftround = Object.create(spriteObject);
+                groundleftround.sourceX = tileSheetX;
+                groundleftround.sourceY = tileSheetY;
+                groundleftround.x = column * SIZE;
+                groundleftround.y = row * SIZE;
+                sprites.push(groundleftround);
+            }
+            if (currentTile == GROUNDSTRAIGHT) {
+                var groundstraight = Object.create(spriteObject);
+                groundstraight.sourceX = tileSheetX;
+                groundstraight.sourceY = tileSheetY;
+                groundstraight.x = column * SIZE;
+                groundstraight.y = row * SIZE;
+                sprites.push(groundstraight);
+            }
+            if (currentTile == GROUNDRIGHTROUND) {
+                var groundrightround = Object.create(spriteObject);
+                groundrightround.sourceX = tileSheetX;
+                groundrightround.sourceY = tileSheetY;
+                groundrightround.x = column * SIZE;
+                groundrightround.y = row * SIZE;
+                sprites.push(groundrightround);
+            }
+            if (currentTile == EXIT) {
+                var exit = Object.create(spriteObject);
+                exit.sourceX = tileSheetX;
+                exit.sourceY = tileSheetY;
+                exit.x = column * SIZE;
+                exit.y = row * SIZE;
+                sprites.push(exit);
+            } 
+            if (currentTile == DOORBOTTOM) {
+                var doorbottom = Object.create(spriteObject);
+                doorbottom.sourceX = tileSheetX;
+                doorbottom.sourceY = tileSheetY;
+                doorbottom.x = column * SIZE;
+                doorbottom.y = row * SIZE;
+                sprites.push(doorbottom);   
+            }
+            if (currentTile == DOORTOP) {
+                var doortop = Object.create(spriteObject);
+                doortop.sourceX = tileSheetX;
+                doortop.sourceY = tileSheetY;
+                doortop.x = column * SIZE;
+                doortop.y = row * SIZE;
+                sprites.push(doortop);
+            }
+            if (currentTile == WATER) {
+                var water = Object.create(spriteObject);
+                water.sourceX = tileSheetX;
+                water.sourceY = tileSheetY;
+                water.x = column * SIZE;
+                water.y = row * SIZE;
+                sprites.push(water);
+            }
+            if (currentTile == ARROW) {
+                var arrow = Object.create(spriteObject);
+                arrow.sourceX = tileSheetX;
+                arrow.sourceY = tileSheetY;
+                arrow.x = column * SIZE;
+                arrow.y = row * SIZE;
+                sprites.push(arrow);
             }
         }
     }
