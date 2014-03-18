@@ -8,6 +8,8 @@ var Game = require("./game.js");
 var port = 1337;
 // Object to store Connections
 var Connections = {};
+// Stores Players[], collsionObjects[], killObject[], goalObjects[] and Other[]
+var Sprites = {};
 var MostConcurrentConnections = 0;
 // simple HTTP Server
 var HTTPServer = HTTP.createServer(function(request, response) {});
@@ -69,8 +71,9 @@ Server.on("request", function(request) {
                     }
                     // create Player at random position in Canvas
                     Connection.Player = Object.create(Game.spriteObject);
-                    Connection.Player.x = Math.floor(Math.random() * (Game.GP.GameWidth - 32));
-                    Connection.Player.y = Math.floor(Math.random() * (Game.GP.GameHeight - 47));
+                    Connection.Player.height = 47;
+                    Connection.Player.x = Math.floor(Math.random() * (Game.GP.GameWidth - Connection.Player.width));
+                    Connection.Player.y = Math.floor(Math.random() * (Game.GP.GameHeight - Connection.Player.height));
                     Connection.Player.Name = message.Data.toString().substring(0, 16);
                     // flatten Object
                     Connection.Player = flatten(Connection.Player);
@@ -123,19 +126,18 @@ Server.on("request", function(request) {
         }
     });
 });
-
 // game loop on server-side
 // TODO gameloop
 setInterval(function() {
     // gameloop actions
 
     // for collision purposes we make a copy of the Players as Array to be handled in game.js
-    var Players = [];
+    Sprites.Players = [];
     for (var ID in Connections) {
         if (!Connections[ID].Player) {
             continue;
         }
-        Players.push(Connections[ID].Player);
+        Sprites.Players.push(Connections[ID].Player);
         // UP
         if (Connections[ID].KeysPressed & 1 && Connections[ID].Player.isOnGround) {
             Connections[ID].Player.vy += Connections[ID].Player.jumpForce;
@@ -174,7 +176,7 @@ setInterval(function() {
         }
     }
     // Run GameFrame
-    Game.RunGameFrame(Players);
+    Game.RunGameFrame(Sprites.Players);
     // send gamestate
     SendGameState();
 }, Game.GP.GameFrameTime);
@@ -184,7 +186,7 @@ setInterval(function() {
  */
 // send GameState to Clients
 function SendGameState() {
-    var PlayersData = [];
+    Sprites.Players = [];
     // helping hash map with connection IDs and PlayersData IDs;
     var Indices = {};
     // store the Player of every Connection in Players
@@ -192,15 +194,15 @@ function SendGameState() {
         if (!Connections[ID].Player) {
             continue;
         }
-        PlayersData.push(Connections[ID].Player);
+        Sprites.Players.push(Connections[ID].Player);
         // store matching IDs
-        Indices[ID] = PlayersData.length - 1;
+        Indices[ID] = Sprites.Players.length - 1;
     }
     // broadcast Players to all Clients
     for (var ID in Connections) {
         Connections[ID].sendUTF(JSON.stringify({
             MyID: Indices[ID],
-            Players: PlayersData
+            Sprites: Sprites
         }));
     }
 };

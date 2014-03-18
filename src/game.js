@@ -4,9 +4,13 @@ var GP = {
     // GameFrameTime in milliseconds
     GameFrameTime: 30,
     GameFriction: 0.8,
-    GameGravity: 0.6,
-    GameBounce: -0.7
+    GameGravity: 0.3,
+    GameBounce: -0.7,
+    GameStun: 2,
+    GameJumpForce: -10
 };
+// Stores Players[], collsionObjects[], killObject[], goalObjects[] and Other[]
+var Sprites = {};
 var spriteObject = {
     // properties for everyone
     sourceX: 0,
@@ -14,7 +18,7 @@ var spriteObject = {
     sourceWidth: 0,
     sourceHeight: 0,
     width: 32,
-    height: 47,
+    height: 32,
     x: 0,
     y: 0,
     // properties for moving objects
@@ -28,9 +32,9 @@ var spriteObject = {
     bounce: GP.GameBounce,
     gravity: GP.GameGravity,
     isOnGround: undefined,
-    jumpForce: -10,
+    jumpForce: GP.GameJumpForce,
     Name: null,
-    // Time for a map in seconds
+    // Time for a maprun in seconds
     Time: 0,
     // stunDuration in seconds
     stunDuration: 0,
@@ -53,45 +57,46 @@ var halfHeight = function(object) {
 // TODO RunGameFrame
 function RunGameFrame(Players) {
     for (var i = 0; i < Players.length; i++) {
-        if (Players[i].stunStart && Players[i].stunDuration != 0) {
-            var stunElapsed = ((new Date() - Players[i].stunStart) / 1000) | 0;
-            if (0 < Players[i].stunDuration) {
+        var CurrentPlayer = Players[i];
+        if (CurrentPlayer.stunStart && CurrentPlayer.stunDuration != 0) {
+            var stunElapsed = ((new Date() - CurrentPlayer.stunStart) / 1000) | 0;
+            if (0 < CurrentPlayer.stunDuration) {
                 // set acceleration to zero
-                Players[i].accelerationY = 0;
-                Players[i].accelerationX = 0;
-                Players[i].vx = 0;
-                Players[i].vy = 0;
-                Players[i].stunDuration = Players[i].stunTime - stunElapsed;
+                CurrentPlayer.accelerationY = 0;
+                CurrentPlayer.accelerationX = 0;
+                CurrentPlayer.vx = 0;
+                CurrentPlayer.vy = 0;
+                CurrentPlayer.stunDuration = CurrentPlayer.stunTime - stunElapsed;
             } else {
-                Players[i].stunTime = 0;
-                Players[i].stunDuration = 0;
-                Players[i].stunStart = null;
+                CurrentPlayer.stunTime = 0;
+                CurrentPlayer.stunDuration = 0;
+                CurrentPlayer.stunStart = null;
             }
         }
         // Apply the acceleration
-        Players[i].vx += Players[i].accelerationX;
-        Players[i].vy += Players[i].accelerationY;
+        CurrentPlayer.vx += CurrentPlayer.accelerationX;
+        CurrentPlayer.vy += CurrentPlayer.accelerationY;
         // Apply friction
-        if (Players[i].isOnGround) {
-            Players[i].vx *= Players[i].friction;
+        if (CurrentPlayer.isOnGround) {
+            CurrentPlayer.vx *= CurrentPlayer.friction;
         }
         // Apply gravity
-        if (!Players[i].isOnGround) {
-            Players[i].vy += Players[i].gravity;
+        if (!CurrentPlayer.isOnGround) {
+            CurrentPlayer.vy += CurrentPlayer.gravity;
         }
         // Speedlimit Acceleration has to be applied before this one
-        if (Players[i].vx > Players[i].speedLimit) {
-            Players[i].vx = Players[i].speedLimit;
+        if (CurrentPlayer.vx > CurrentPlayer.speedLimit) {
+            CurrentPlayer.vx = CurrentPlayer.speedLimit;
         }
-        if (Players[i].vx < -Players[i].speedLimit) {
-            Players[i].vx = -Players[i].speedLimit;
+        if (CurrentPlayer.vx < -CurrentPlayer.speedLimit) {
+            CurrentPlayer.vx = -CurrentPlayer.speedLimit;
         }
-        if (Players[i].vy > Players[i].speedLimit * 2) {
-            Players[i].vy = Players[i].speedLimit * 2;
+        if (CurrentPlayer.vy > CurrentPlayer.speedLimit * 2) {
+            CurrentPlayer.vy = CurrentPlayer.speedLimit * 2;
         }
         // move Player | apply velocity to player
-        Players[i].x += Players[i].vx;
-        Players[i].y += Players[i].vy;
+        CurrentPlayer.x += CurrentPlayer.vx;
+        CurrentPlayer.y += CurrentPlayer.vy;
         // check for collision Player VS Player
         for (var j = 0; j < Players.length; j++) {
             if (j == i) {
@@ -99,37 +104,37 @@ function RunGameFrame(Players) {
             }
             var opponent = Players[j];
             // TODO set bounce to true when bounce is implemented
-            var collisionSide = collisionDetection(Players[i], opponent, false);
+            var collisionSide = collisionDetection(CurrentPlayer, opponent, false);
             // TODO handle collisionside
             if (collisionSide == "bottom") {
                 // stun in seconds
-                opponent.stunTime = 3;
+                opponent.stunTime = GP.GameStun;
                 opponent.stunDuration = opponent.stunTime;
                 opponent.stunStart = new Date();
             }
         }
         // Limit for Canvas and bounce effect
         // Left
-        if (Players[i].x < 0) {
-            Players[i].vx *= Players[i].bounce;
-            Players[i].x = 0;
+        if (CurrentPlayer.x < 0) {
+            CurrentPlayer.vx *= CurrentPlayer.bounce;
+            CurrentPlayer.x = 0;
         }
         //Top
-        if (Players[i].y < 0) {
-            Players[i].vy *= Players[i].bounce;
-            Players[i].y = 0;
+        if (CurrentPlayer.y < 0) {
+            CurrentPlayer.vy *= CurrentPlayer.bounce;
+            CurrentPlayer.y = 0;
         }
         //Right
-        if ((Players[i].x + Players[i].width) > GP.GameWidth) {
-            Players[i].vx *= Players[i].bounce;
-            Players[i].x = GP.GameWidth - Players[i].width;
+        if ((CurrentPlayer.x + CurrentPlayer.width) > GP.GameWidth) {
+            CurrentPlayer.vx *= CurrentPlayer.bounce;
+            CurrentPlayer.x = GP.GameWidth - CurrentPlayer.width;
         }
         //Bottom
-        if ((Players[i].y + Players[i].height) > GP.GameHeight) {
+        if ((CurrentPlayer.y + CurrentPlayer.height) > GP.GameHeight) {
             // repositioning
-            Players[i].y = GP.GameHeight - Players[i].height;
-            Players[i].isOnGround = true;
-            Players[i].vy = 0;
+            CurrentPlayer.y = GP.GameHeight - CurrentPlayer.height;
+            CurrentPlayer.isOnGround = true;
+            CurrentPlayer.vy = 0;
         }
     }
 };
@@ -145,7 +150,6 @@ function collisionDetection(o1, o2, bounce) {
     // distance vector
     var vectorX = centerX(o1) - centerX(o2);
     var vectorY = centerY(o1) - centerY(o2);
-
     // combined half-widths and half-heights
     var combinedHalfWidths = halfWidth(o1) + halfWidth(o2);
     var combinedHalfHeights = halfHeight(o1) + halfHeight(o2);
@@ -178,11 +182,11 @@ function collisionDetection(o1, o2, bounce) {
                 if (vectorX > 0) {
                     collisionSide = "left";
                     //Move the rectangle out of the collision
-                    // o1.x = o1.x + overlapX;
+                    o1.x = o1.x + overlapX;
                 } else {
                     collisionSide = "right";
                     //Move the rectangle out of the collision
-                    // o1.x = o1.x - overlapX;
+                    o1.x = o1.x - overlapX;
                 }
                 if (bounce) {
                     // TODO implement bounce on collision
@@ -246,5 +250,4 @@ if (typeof exports !== "undefined") {
     exports.GP = GP;
     exports.spriteObject = spriteObject;
     exports.RunGameFrame = RunGameFrame;
-    exports.centerX = centerX;
 }
