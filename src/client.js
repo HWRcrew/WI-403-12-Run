@@ -8,6 +8,8 @@ var MyPlayer = null;
 var KeysPressed = 0;
 var SpriteImage = new Image();
 SpriteImage.src = "images/sprite.png";
+var TileImage = new Image();
+TileImage.src = "images/tiles.png";
 var backgroundImage = new Image();
 backgroundImage.src = "images/background.png";
 
@@ -208,6 +210,18 @@ window.addEventListener("load", function() {
     };
 });
 
+/*void drawImage(
+  in nsIDOMElement image,
+  in float sx,
+  in float sy,
+  in float sw,
+  in float sh,
+  in float dx, 
+  in float dy,
+  in float dw,
+  in float dh
+);*/
+
 // Function for drawing of the current Game-State
 function DrawGame() {
     // Clear the screen
@@ -215,7 +229,29 @@ function DrawGame() {
     // Set font for Playername
     GraphicsContext.font = "8pt Arial";
     GraphicsContext.drawImage(backgroundImage, 0, 0);
-    // draw every player
+    // translate the canvas - so you move it around the map
+    // GraphicsContext.translate(MyPlayer.offsetX, MyPlayer.offsetY);
+    // draw collisionObjects[]
+    for (var i = 0; i < Sprites.collisionObjects.length; i++) {
+        sprite = Sprites.collisionObjects[i];
+        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+    }
+    // draw killObjects[]
+    for (var i = 0; i < Sprites.killObjects.length; i++) {
+        sprite = Sprites.killObjects[i];
+        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+    }
+    // draw goalObjects[]
+    for (var i = 0; i < Sprites.goalObjects.length; i++) {
+        sprite = Sprites.goalObjects[i];
+        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+    }
+    // draw otherObjects[]
+    for (var i = 0; i < Sprites.otherObjects.length; i++) {
+        sprite = Sprites.otherObjects[i];
+        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+    }
+    // draw Players[]
     for (var i = 0; i < Sprites.Players.length; i++) {
         GraphicsContext.drawImage(SpriteImage, Sprites.Players[i].x, Sprites.Players[i].y);
         // draw Name above every Player

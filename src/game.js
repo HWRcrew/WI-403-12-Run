@@ -14,14 +14,14 @@ var GP = {
     GameStun: 2,
     GameJumpForce: -10
 };
-// Stores Players[], collsionObjects[], killObject[], goalObjects[] and Other[]
+// Stores Players[], collsionObjects[], killObject[], goalObjects[] and otherObjects[]
 var Sprites = {};
 var spriteObject = {
     // properties for everyone
     sourceX: 0,
     sourceY: 0,
-    sourceWidth: 0,
-    sourceHeight: 0,
+    sourceWidth: 32,
+    sourceHeight: 32,
     width: 32,
     height: 32,
     x: 0,
@@ -39,6 +39,8 @@ var spriteObject = {
     isOnGround: undefined,
     jumpForce: GP.GameJumpForce,
     Name: null,
+    offsetX: 0,
+    offsetY: 0,
     // Time for a maprun in seconds
     Time: 0,
     // stunDuration in seconds
@@ -100,6 +102,10 @@ function RunGameFrame(Players) {
         // move Player | apply velocity to player
         CurrentPlayer.x += CurrentPlayer.vx;
         CurrentPlayer.y += CurrentPlayer.vy;
+        // apply offset
+        // TODO replace simple solution
+        CurrentPlayer.offsetX += CurrentPlayer.vx;
+        // CurrentPlayer.offsetY += CurrentPlayer.vy;
         // check for collision Player VS Player
         for (var j = 0; j < Players.length; j++) {
             if (j == i) {
@@ -201,118 +207,6 @@ function collisionDetection(o1, o2, bounce) {
     }
     return collisionSide;
 }
-/**
- * MapCode
- */
-var EMPTY = 0;
-
-//TODO: Namen für Variablen herausfinden!
-var GROUNDROUND = 1;
-var GROUNDLEFTROUND = 2;
-var GROUNDSTRAIGHT = 3;
-var GROUNDRIGHTROUND = 4;
-var EXIT = 5;
-var DOORBOTTOM = 6;
-var DOORTOP = 7;
-var WATER = 8;
-var ARROW = 9;
-
-
-var collisionObjects = [];
-var killObjects = [];
-
-/**
- * mapbuilder
- */
-function buildMap(mapArray) {
-    var ROWS = mapArray.length;
-    var COLUMNS = mapArray[0].length;
-    for (var row = 0; row < ROWS; row++) {
-        for (var column = 0; column < COLUMNS; column++) {
-            var currentTile = mapArray[row][column];
-            if (currentTile == EMPTY) {
-                continue;
-            }
-
-            var tileSheetX = Math.floor((currentTile - 1) % tilesheetColumns) * SIZE;
-            var tileSheetY = Math.floor((currentTile - 1) / tilesheetColumns) * SIZE;
-
-            // TODO build map
-            if (currentTile == GROUNDROUND) {
-                var groundround = Object.create(spriteObject);
-                groundround.sourceX = tileSheetX;
-                groundround.sourceY = tileSheetY;
-                groundround.x = column * SIZE;
-                groundround.y = row * SIZE;
-                sprites.push(groundround);
-            }
-            if (currentTile == GROUNDLEFTROUND) {
-                var groundleftround = Object.create(spriteObject);
-                groundleftround.sourceX = tileSheetX;
-                groundleftround.sourceY = tileSheetY;
-                groundleftround.x = column * SIZE;
-                groundleftround.y = row * SIZE;
-                sprites.push(groundleftround);
-            }
-            if (currentTile == GROUNDSTRAIGHT) {
-                var groundstraight = Object.create(spriteObject);
-                groundstraight.sourceX = tileSheetX;
-                groundstraight.sourceY = tileSheetY;
-                groundstraight.x = column * SIZE;
-                groundstraight.y = row * SIZE;
-                sprites.push(groundstraight);
-            }
-            if (currentTile == GROUNDRIGHTROUND) {
-                var groundrightround = Object.create(spriteObject);
-                groundrightround.sourceX = tileSheetX;
-                groundrightround.sourceY = tileSheetY;
-                groundrightround.x = column * SIZE;
-                groundrightround.y = row * SIZE;
-                sprites.push(groundrightround);
-            }
-            if (currentTile == EXIT) {
-                var exit = Object.create(spriteObject);
-                exit.sourceX = tileSheetX;
-                exit.sourceY = tileSheetY;
-                exit.x = column * SIZE;
-                exit.y = row * SIZE;
-                sprites.push(exit);
-            }
-            if (currentTile == DOORBOTTOM) {
-                var doorbottom = Object.create(spriteObject);
-                doorbottom.sourceX = tileSheetX;
-                doorbottom.sourceY = tileSheetY;
-                doorbottom.x = column * SIZE;
-                doorbottom.y = row * SIZE;
-                sprites.push(doorbottom);
-            }
-            if (currentTile == DOORTOP) {
-                var doortop = Object.create(spriteObject);
-                doortop.sourceX = tileSheetX;
-                doortop.sourceY = tileSheetY;
-                doortop.x = column * SIZE;
-                doortop.y = row * SIZE;
-                sprites.push(doortop);
-            }
-            if (currentTile == WATER) {
-                var water = Object.create(spriteObject);
-                water.sourceX = tileSheetX;
-                water.sourceY = tileSheetY;
-                water.x = column * SIZE;
-                water.y = row * SIZE;
-                sprites.push(water);
-            }
-            if (currentTile == ARROW) {
-                var arrow = Object.create(spriteObject);
-                arrow.sourceX = tileSheetX;
-                arrow.sourceY = tileSheetY;
-                arrow.x = column * SIZE;
-                arrow.y = row * SIZE;
-                sprites.push(arrow);
-            }
-        }
-    }
-};
 
 // Export for server.js
 if (typeof exports !== "undefined") {

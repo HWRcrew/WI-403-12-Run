@@ -24,8 +24,22 @@ var Server = new WebSocketServer({
     httpServer: HTTPServer,
     closeTimeout: 6000
 });
-
-
+var map = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 6, 0, 0, 0],
+    [3, 3, 3, 3, 3, 3, 4, 8, 8, 8, 8, 8, 8, 8, 2, 3, 3, 3, 3, 3, 3, 0, 0, 0]
+];
+// build map
+buildMap(map);
 // ACTION
 // first request from a client
 Server.on("request", function(request) {
@@ -72,6 +86,7 @@ Server.on("request", function(request) {
                     // create Player at random position in Canvas
                     Connection.Player = Object.create(Game.spriteObject);
                     Connection.Player.height = 47;
+                    Connection.Player.sourceHeight = 47;
                     Connection.Player.x = Math.floor(Math.random() * (Game.GP.GameWidth - Connection.Player.width));
                     Connection.Player.y = Math.floor(Math.random() * (Game.GP.GameHeight - Connection.Player.height));
                     Connection.Player.Name = message.Data.toString().substring(0, 16);
@@ -224,4 +239,131 @@ function ConnectionsSize() {
         }
     }
     return size;
+};
+
+/**
+ * mapbuilder
+ */
+function buildMap(mapArray) {
+    /**
+     * MapCode
+     */
+    var EMPTY = 0;
+    var GROUNDROUND = 1;
+    var GROUNDLEFTROUND = 2;
+    var GROUNDSTRAIGHT = 3;
+    var GROUNDRIGHTROUND = 4;
+    var EXIT = 5;
+    var DOORBOTTOM = 6;
+    var DOORTOP = 7;
+    var WATER = 8;
+    var ARROW = 9;
+
+    Sprites.collisionObjects = [];
+    Sprites.goalObjects = [];
+    Sprites.killObjects = [];
+    Sprites.otherObjects = [];
+    var ROWS = mapArray.length;
+    var SIZE = 32;
+    var tilesheetColumns = 9;
+    // TODO remove existing sprites except players or you will overload the sprites with objects
+    var COLUMNS = mapArray[0].length;
+    for (var row = 0; row < ROWS; row++) {
+        for (var column = 0; column < COLUMNS; column++) {
+            var currentTile = mapArray[row][column];
+            if (currentTile == EMPTY) {
+                continue;
+            }
+            var tileSheetX = Math.floor((currentTile - 1) % tilesheetColumns) * SIZE;
+            var tileSheetY = Math.floor((currentTile - 1) / tilesheetColumns) * SIZE;
+            switch (currentTile) {
+                case GROUNDROUND:
+                    var groundround = Object.create(Game.spriteObject);
+                    groundround.sourceX = tileSheetX;
+                    groundround.sourceY = tileSheetY;
+                    groundround.x = column * SIZE;
+                    groundround.y = row * SIZE;
+                    flatten(groundround);
+                    Sprites.collisionObjects.push(groundround);
+                    break;
+                case GROUNDLEFTROUND:
+                    var groundleftround = Object.create(Game.spriteObject);
+                    groundleftround.sourceX = tileSheetX;
+                    groundleftround.sourceY = tileSheetY;
+                    groundleftround.x = column * SIZE;
+                    groundleftround.y = row * SIZE;
+                    flatten(groundleftround);
+                    Sprites.collisionObjects.push(groundleftround);
+                    break;
+                case GROUNDSTRAIGHT:
+                    var groundstraight = Object.create(Game.spriteObject);
+                    groundstraight.sourceX = tileSheetX;
+                    groundstraight.sourceY = tileSheetY;
+                    groundstraight.x = column * SIZE;
+                    groundstraight.y = row * SIZE;
+                    flatten(groundstraight);
+                    Sprites.collisionObjects.push(groundstraight);
+                    break;
+                case GROUNDRIGHTROUND:
+                    var groundrightround = Object.create(Game.spriteObject);
+                    groundrightround.sourceX = tileSheetX;
+                    groundrightround.sourceY = tileSheetY;
+                    groundrightround.x = column * SIZE;
+                    groundrightround.y = row * SIZE;
+                    flatten(groundrightround);
+                    Sprites.collisionObjects.push(groundrightround);
+                    break;
+                case EXIT:
+                    var exit = Object.create(Game.spriteObject);
+                    exit.sourceX = tileSheetX;
+                    exit.sourceY = tileSheetY;
+                    exit.x = column * SIZE;
+                    exit.y = row * SIZE;
+                    flatten(exit);
+                    Sprites.otherObjects.push(exit);
+                    break;
+                case DOORBOTTOM:
+                    var doorbottom = Object.create(Game.spriteObject);
+                    doorbottom.sourceX = tileSheetX;
+                    doorbottom.sourceY = tileSheetY;
+                    doorbottom.x = column * SIZE;
+                    doorbottom.y = row * SIZE;
+                    flatten(doorbottom);
+                    Sprites.goalObjects.push(doorbottom);
+                    break;
+                case DOORTOP:
+                    var doortop = Object.create(Game.spriteObject);
+                    doortop.sourceX = tileSheetX;
+                    doortop.sourceY = tileSheetY;
+                    // handle special doortop height
+                    doortop.height = 16;
+                    doortop.x = column * SIZE;
+                    doortop.y = row * SIZE;
+                    flatten(doortop);
+                    Sprites.goalObjects.push(doortop);
+                    break;
+                case WATER:
+                    var water = Object.create(Game.spriteObject);
+                    water.sourceX = tileSheetX;
+                    water.sourceY = tileSheetY;
+                    water.x = column * SIZE;
+                    water.y = row * SIZE;
+                    flatten(water);
+                    Sprites.killObjects.push(water);
+                    break;
+                case ARROW:
+                    var arrow = Object.create(Game.spriteObject);
+                    arrow.sourceX = tileSheetX;
+                    arrow.sourceY = tileSheetY;
+                    arrow.x = column * SIZE;
+                    arrow.y = row * SIZE;
+                    flatten(arrow);
+                    Sprites.otherObjects.push(arrow);
+                    break;
+                default:
+                    console.log("Unknown tile");
+                    break;
+            }
+        }
+    }
 };
