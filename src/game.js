@@ -1,3 +1,5 @@
+// IMPORTANT issues: player stands on player = isonground so you can walk sideways without falling down
+
 var GP = {
     GameWidth: 768,
     GameHeight: 384,
@@ -173,6 +175,7 @@ function collisionDetection(o1, o2, bounce) {
                     //Move the rectangle out of the collision
                     o1.y = o1.y - overlapY;
                     o1.isOnGround = true;
+                    o1.vy = 0;
                 }
                 if (bounce) {
                     // TODO implement bounce on collision
@@ -235,7 +238,7 @@ function buildMap(mapArray) {
 
             var tileSheetX = Math.floor((currentTile - 1) % tilesheetColumns) * SIZE;
             var tileSheetY = Math.floor((currentTile - 1) / tilesheetColumns) * SIZE;
-            
+
             // TODO build map
             if (currentTile == GROUNDROUND) {
                 var groundround = Object.create(spriteObject);
@@ -276,14 +279,14 @@ function buildMap(mapArray) {
                 exit.x = column * SIZE;
                 exit.y = row * SIZE;
                 sprites.push(exit);
-            } 
+            }
             if (currentTile == DOORBOTTOM) {
                 var doorbottom = Object.create(spriteObject);
                 doorbottom.sourceX = tileSheetX;
                 doorbottom.sourceY = tileSheetY;
                 doorbottom.x = column * SIZE;
                 doorbottom.y = row * SIZE;
-                sprites.push(doorbottom);   
+                sprites.push(doorbottom);
             }
             if (currentTile == DOORTOP) {
                 var doortop = Object.create(spriteObject);
