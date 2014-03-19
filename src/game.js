@@ -1,4 +1,7 @@
-// IMPORTANT issues: player stands on player = isonground so you can walk sideways without falling down
+/* ISSUES
+ *
+ */
+// network connection seems to be not that fast any more??? too many data?
 
 var GP = {
     GameWidth: 768,
@@ -82,10 +85,8 @@ function RunGameFrame(Players) {
         if (CurrentPlayer.isOnGround) {
             CurrentPlayer.vx *= CurrentPlayer.friction;
         }
-        // Apply gravity
-        if (!CurrentPlayer.isOnGround) {
-            CurrentPlayer.vy += CurrentPlayer.gravity;
-        }
+        // Apply gravity always
+        CurrentPlayer.vy += CurrentPlayer.gravity;
         // Speedlimit Acceleration has to be applied before this one
         if (CurrentPlayer.vx > CurrentPlayer.speedLimit) {
             CurrentPlayer.vx = CurrentPlayer.speedLimit;
@@ -105,8 +106,7 @@ function RunGameFrame(Players) {
                 continue;
             }
             var opponent = Players[j];
-            // TODO set bounce to true when bounce is implemented
-            var collisionSide = collisionDetection(CurrentPlayer, opponent, false);
+            var collisionSide = collisionDetection(CurrentPlayer, opponent, true);
             // TODO handle collisionside
             if (collisionSide == "bottom") {
                 // stun in seconds
@@ -177,9 +177,6 @@ function collisionDetection(o1, o2, bounce) {
                     o1.isOnGround = true;
                     o1.vy = 0;
                 }
-                if (bounce) {
-                    // TODO implement bounce on collision
-                }
             } else {
                 // collision on Y-Axis
                 if (vectorX > 0) {
@@ -191,8 +188,9 @@ function collisionDetection(o1, o2, bounce) {
                     //Move the rectangle out of the collision
                     o1.x = o1.x - overlapX;
                 }
+                // bounce back when moving against second object
                 if (bounce) {
-                    // TODO implement bounce on collision
+                    o1.vx *= o1.bounce;
                 }
             }
         } else {
