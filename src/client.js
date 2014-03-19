@@ -234,12 +234,13 @@ function DrawGame() {
     // draw collisionObjects[]
     for (var i = 0; i < Sprites.collisionObjects.length; i++) {
         sprite = Sprites.collisionObjects[i];
-        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
     }
     // draw killObjects[]
     for (var i = 0; i < Sprites.killObjects.length; i++) {
         sprite = Sprites.killObjects[i];
-        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
+
     }
     // draw goalObjects[]
     for (var i = 0; i < Sprites.goalObjects.length; i++) {
@@ -249,7 +250,7 @@ function DrawGame() {
     // draw otherObjects[]
     for (var i = 0; i < Sprites.otherObjects.length; i++) {
         sprite = Sprites.otherObjects[i];
-        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
     }
     // draw Players[]
     for (var i = 0; i < Sprites.Players.length; i++) {
