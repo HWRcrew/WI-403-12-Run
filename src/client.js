@@ -171,7 +171,7 @@ window.addEventListener("load", function() {
                 MyPlayer.accelerationX = 0;
             }
             // TODO @issue blinking on jump
-            RunGameFrame(Sprites.Players);
+            RunGameFrame(Sprites);
             DrawGame();
 
         }, GP.GameFrameTime);
@@ -244,7 +244,7 @@ function DrawGame() {
     // draw goalObjects[]
     for (var i = 0; i < Sprites.goalObjects.length; i++) {
         sprite = Sprites.goalObjects[i];
-        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.width, sprite.height);
+        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
     }
     // draw otherObjects[]
     for (var i = 0; i < Sprites.otherObjects.length; i++) {

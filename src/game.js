@@ -2,6 +2,7 @@
  *
  */
 // network connection seems to be not that fast any more??? too many data?
+// when you fall down and try to walk you get bounced off, maybe because of the drop in the block and then the collision comes before the offset
 
 var GP = {
     GameWidth: 768,
@@ -62,9 +63,9 @@ var halfHeight = function(object) {
     return object.height / 2;
 };
 // TODO RunGameFrame
-function RunGameFrame(Players) {
-    for (var i = 0; i < Players.length; i++) {
-        var CurrentPlayer = Players[i];
+function RunGameFrame(Sprites) {
+    for (var i = 0; i < Sprites.Players.length; i++) {
+        var CurrentPlayer = Sprites.Players[i];
         if (CurrentPlayer.stunStart && CurrentPlayer.stunDuration != 0) {
             var stunElapsed = ((new Date() - CurrentPlayer.stunStart) / 1000) | 0;
             if (0 < CurrentPlayer.stunDuration) {
@@ -107,11 +108,11 @@ function RunGameFrame(Players) {
         CurrentPlayer.offsetX += CurrentPlayer.vx;
         // CurrentPlayer.offsetY += CurrentPlayer.vy;
         // check for collision Player VS Player
-        for (var j = 0; j < Players.length; j++) {
+        for (var j = 0; j < Sprites.Players.length; j++) {
             if (j == i) {
                 continue;
             }
-            var opponent = Players[j];
+            var opponent = Sprites.Players[j];
             var collisionSide = collisionDetection(CurrentPlayer, opponent, true);
             // TODO handle collisionside
             if (collisionSide == "bottom") {
@@ -120,6 +121,11 @@ function RunGameFrame(Players) {
                 opponent.stunDuration = opponent.stunTime;
                 opponent.stunStart = new Date();
             }
+        }
+        // check for collision with collisionObjects
+        for (var j = 0; j < Sprites.collisionObjects.length; j++) {
+            var cObject = Sprites.collisionObjects[j];
+            collisionDetection(CurrentPlayer, cObject, true);
         }
         // Limit for Canvas and bounce effect
         // Left

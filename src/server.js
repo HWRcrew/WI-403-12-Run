@@ -191,7 +191,7 @@ setInterval(function() {
         }
     }
     // Run GameFrame
-    Game.RunGameFrame(Sprites.Players);
+    Game.RunGameFrame(Sprites);
     // send gamestate
     SendGameState();
 }, Game.GP.GameFrameTime);
