@@ -10,10 +10,11 @@ var GP = {
     // GameFrameTime in milliseconds
     GameFrameTime: 30,
     GameFriction: 0.8,
-    GameGravity: 0.3,
+    GameGravity: 0.6,
     GameBounce: -0.7,
-    GameStun: 2,
-    GameJumpForce: -10
+    GameStunTime: 2,
+    GameJumpForce: -10,
+    GameSpeedLimit: 5
 };
 // Stores Players[], collsionObjects[], killObject[], goalObjects[] and otherObjects[]
 var Sprites = {};
@@ -30,19 +31,13 @@ var spriteObject = {
     // properties for moving objects
     vx: 0,
     vy: 0,
-    // properties for players
     accelerationX: 0,
     accelerationY: 0,
-    speedLimit: 5,
     friction: GP.GameFriction,
-    bounce: GP.GameBounce,
-    gravity: GP.GameGravity,
+    // gravity: GP.GameGravity,
     isOnGround: undefined,
-    jumpForce: GP.GameJumpForce,
     Name: null,
-    offsetX: 0,
-    offsetY: 0,
-    // Time for a maprun in seconds
+    // Time for a one maprun in seconds
     Time: 0,
     // stunDuration in seconds
     stunDuration: 0,
@@ -89,16 +84,16 @@ function RunGameFrame(Sprites) {
             CurrentPlayer.vx *= CurrentPlayer.friction;
         }
         // Apply gravity always
-        CurrentPlayer.vy += CurrentPlayer.gravity;
+        CurrentPlayer.vy += GP.GameGravity;
         // Speedlimit Acceleration has to be applied before this one
-        if (CurrentPlayer.vx > CurrentPlayer.speedLimit) {
-            CurrentPlayer.vx = CurrentPlayer.speedLimit;
+        if (CurrentPlayer.vx > GP.GameSpeedLimit) {
+            CurrentPlayer.vx = GP.GameSpeedLimit;
         }
-        if (CurrentPlayer.vx < -CurrentPlayer.speedLimit) {
-            CurrentPlayer.vx = -CurrentPlayer.speedLimit;
+        if (CurrentPlayer.vx < -GP.GameSpeedLimit) {
+            CurrentPlayer.vx = -GP.GameSpeedLimit;
         }
-        if (CurrentPlayer.vy > CurrentPlayer.speedLimit * 2) {
-            CurrentPlayer.vy = CurrentPlayer.speedLimit * 2;
+        if (CurrentPlayer.vy > GP.GameSpeedLimit * 2) {
+            CurrentPlayer.vy = GP.GameSpeedLimit * 2;
         }
         // move Player | apply velocity to player
         CurrentPlayer.x += CurrentPlayer.vx;
@@ -117,7 +112,7 @@ function RunGameFrame(Sprites) {
             // TODO handle collisionside
             if (collisionSide == "bottom") {
                 // stun in seconds
-                opponent.stunTime = GP.GameStun;
+                opponent.stunTime = GP.GameStunTime;
                 opponent.stunDuration = opponent.stunTime;
                 opponent.stunStart = new Date();
             }
@@ -132,7 +127,7 @@ function RunGameFrame(Sprites) {
                     break;
                 case "bottom":
                     CurrentPlayer.isOnGround = true;
-                    CurrentPlayer.vy = -CurrentPlayer.gravity;
+                    CurrentPlayer.vy = -GP.GameGravity;
                     break;
                 case "left":
                     break;
@@ -145,17 +140,17 @@ function RunGameFrame(Sprites) {
         // Limit for Canvas and bounce effect
         // Left
         if (CurrentPlayer.x < 0) {
-            CurrentPlayer.vx *= CurrentPlayer.bounce;
+            CurrentPlayer.vx *= GP.GameBounce;
             CurrentPlayer.x = 0;
         }
         //Top
         if (CurrentPlayer.y < 0) {
-            CurrentPlayer.vy *= CurrentPlayer.bounce;
+            CurrentPlayer.vy *= GP.GameBounce;
             CurrentPlayer.y = 0;
         }
         //Right
         if ((CurrentPlayer.x + CurrentPlayer.width) > GP.GameWidth) {
-            CurrentPlayer.vx *= CurrentPlayer.bounce;
+            CurrentPlayer.vx *= GP.GameBounce;
             CurrentPlayer.x = GP.GameWidth - CurrentPlayer.width;
         }
         //Bottom
@@ -215,7 +210,7 @@ function collisionDetection(o1, o2, bounce) {
                 }
                 // bounce back when moving against second object
                 if (bounce) {
-                    o1.vx *= o1.bounce;
+                    o1.vx *= GP.GameBounce;
                 }
             }
         } else {

@@ -136,7 +136,7 @@ window.addEventListener("load", function() {
              */
             // UP
             if (KeysPressed & 1 && MyPlayer.isOnGround) {
-                MyPlayer.vy += MyPlayer.jumpForce;
+                MyPlayer.vy += GameJumpForce;
                 MyPlayer.isOnGround = false;
                 MyPlayer.friction = 1;
             }
@@ -183,7 +183,12 @@ window.addEventListener("load", function() {
         } catch (error) {
             console.error((new Date()) + " JSON parsing error: ", error);
         }
-        Sprites = message.Sprites;
+        if (message.Type == "all") {
+            Sprites = message.Sprites;
+        }
+        if (message.Type == "players") {
+            Sprites.Players = message.Players;
+        }
         // need to make new Date out of stunStart, because of JSON.stringify / JSON.parse
         for (var i = 0; i < Sprites.Players.length; i++) {
             if (Sprites.Players[i].stunStart) {
@@ -232,25 +237,33 @@ function DrawGame() {
     // translate the canvas - so you move it around the map
     // GraphicsContext.translate(MyPlayer.offsetX, MyPlayer.offsetY);
     // draw collisionObjects[]
-    for (var i = 0; i < Sprites.collisionObjects.length; i++) {
-        sprite = Sprites.collisionObjects[i];
-        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
+    if (Sprites.collisionObjects) {
+        for (var i = 0; i < Sprites.collisionObjects.length; i++) {
+            sprite = Sprites.collisionObjects[i];
+            GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
+        }
     }
     // draw killObjects[]
-    for (var i = 0; i < Sprites.killObjects.length; i++) {
-        sprite = Sprites.killObjects[i];
-        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
+    if (Sprites.killObjects) {
+        for (var i = 0; i < Sprites.killObjects.length; i++) {
+            sprite = Sprites.killObjects[i];
+            GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
 
+        }
     }
     // draw goalObjects[]
-    for (var i = 0; i < Sprites.goalObjects.length; i++) {
-        sprite = Sprites.goalObjects[i];
-        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
+    if (Sprites.goalObjects) {
+        for (var i = 0; i < Sprites.goalObjects.length; i++) {
+            sprite = Sprites.goalObjects[i];
+            GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
+        }
     }
     // draw otherObjects[]
-    for (var i = 0; i < Sprites.otherObjects.length; i++) {
-        sprite = Sprites.otherObjects[i];
-        GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
+    if (Sprites.otherObjects) {
+        for (var i = 0; i < Sprites.otherObjects.length; i++) {
+            sprite = Sprites.otherObjects[i];
+            GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
+        }
     }
     // draw Players[]
     for (var i = 0; i < Sprites.Players.length; i++) {

@@ -8,13 +8,9 @@ var Game = require("./game.js");
 var port = 1337;
 // Object to store Connections
 var Connections = {};
+var Connection;
 // Stores Players[], collsionObjects[], killObject[], goalObjects[] and Other[]
 var Sprites = {};
-Sprites.collisionObjects = [];
-Sprites.realCollisionObjects = [];
-Sprites.goalObjects = [];
-Sprites.killObjects = [];
-Sprites.otherObjects = [];
 var MostConcurrentConnections = 0;
 // simple HTTP Server
 var HTTPServer = HTTP.createServer(function(request, response) {});
@@ -38,10 +34,10 @@ var map1layerCol = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3, 4],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 2, 3, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 3, 3, 3],
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 3, 3, 3, 0, 0, 0, 3, 3, 3],
     [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
 ];
 // build map
@@ -50,7 +46,7 @@ buildLayer(map1layerCol, "collision");
 // ACTION
 // first request from a client
 Server.on("request", function(request) {
-    var Connection = request.accept(null, request.origin);
+    Connection = request.accept(null, request.origin);
     Connection.IP = request.remoteAddress;
     // assign random ID to Connection
     do {
@@ -101,6 +97,8 @@ Server.on("request", function(request) {
                     Connection.Player = flatten(Connection.Player);
                     // initial KeysPressed on serverside
                     Connection.KeysPressed = 0;
+                    // Send initial GameState with Map-Data
+                    SendInitialGameState();
                     break;
                 case "keydown":
                     if (message.Data == 38) {
@@ -162,7 +160,7 @@ setInterval(function() {
         Sprites.Players.push(Connections[ID].Player);
         // UP
         if (Connections[ID].KeysPressed & 1 && Connections[ID].Player.isOnGround) {
-            Connections[ID].Player.vy += Connections[ID].Player.jumpForce;
+            Connections[ID].Player.vy += Game.GP.GameJumpForce;
             Connections[ID].Player.isOnGround = false;
             Connections[ID].Player.friction = 1;
         }
@@ -192,7 +190,6 @@ setInterval(function() {
         // no key pressed
         if (Connections[ID].KeysPressed == 0) {
             Connections[ID].Player.friction = Game.GP.GameFriction;
-            Connections[ID].Player.gravity = 0.6;
             Connections[ID].Player.accelerationY = 0;
             Connections[ID].Player.accelerationX = 0;
         }
@@ -207,6 +204,29 @@ setInterval(function() {
  * helper functions
  */
 // send GameState to Clients
+function SendInitialGameState() {
+    Sprites.Players = [];
+    // helping hash map with connection IDs and PlayersData IDs;
+    var Indices = {};
+    // store the Player of every Connection in Players
+    for (var ID in Connections) {
+        if (!Connections[ID].Player) {
+            continue;
+        }
+        Sprites.Players.push(Connections[ID].Player);
+        // store matching IDs
+        Indices[ID] = Sprites.Players.length - 1;
+    }
+    // broadcast Players to all Clients
+    var json = JSON.stringify({
+        Type: "all",
+        MyID: Indices[Connection.ID],
+        Sprites: Sprites
+    });
+    console.log(new Date() + " GameState-length " + json.length + " in Bytes " + Buffer.byteLength(json, 'utf8'));
+    Connection.sendUTF(json);
+};
+
 function SendGameState() {
     Sprites.Players = [];
     // helping hash map with connection IDs and PlayersData IDs;
@@ -222,12 +242,15 @@ function SendGameState() {
     }
     // broadcast Players to all Clients
     for (var ID in Connections) {
-        Connections[ID].sendUTF(JSON.stringify({
+        var json = JSON.stringify({
+            Type: "players",
             MyID: Indices[ID],
-            Sprites: Sprites
-        }));
+            Players: Sprites.Players
+        });
+        console.log(new Date() + " GameState-length " + json.length + " in Bytes " + Buffer.byteLength(json, 'utf8'));
+        Connections[ID].sendUTF(json);
     }
-};
+}
 // Flatten Object for JSON.stringify
 function flatten(object) {
     // var result = Object.create(object);
@@ -251,6 +274,8 @@ function ConnectionsSize() {
 /**
  * builds single layers
  */
+// STATE BROKEN
+// TODO fix problem with Server
 function buildLayer(layerInput, layer) {
     var ROWS = layerInput.length;
     var SIZE = 32;
@@ -262,18 +287,23 @@ function buildLayer(layerInput, layer) {
     var collision = false;
     switch (layer) {
         case COLLISIONLAYER:
+            Sprites.collisionObjects = new Array();
             layer = Sprites.collisionObjects;
+            Sprites.realCollisionObjects = new Array();
             collision = true;
             break;
         case GOALLAYER:
+            Sprites.goalObjects = [];
             layer = Sprites.goalObjects;
             collision = false;
             break;
         case KILLLAYER:
+            Sprites.killObjects = [];
             layer = Sprites.killObjects;
             collision = false;
             break;
         case OTHERLAYER:
+            Sprites.otherObjects = [];
             layer = Sprites.otherObjects;
             collision = false;
             break;
@@ -288,7 +318,6 @@ function buildLayer(layerInput, layer) {
             var currentTile = layerInput[row][column];
             // for the realCollisionObjects and to summarize them to bigger objects
             if (collision) {
-                console.log("collision=true");
                 if (currentTile !== 0) {
                     rectLength++;
                 }
@@ -328,9 +357,11 @@ function buildLayer(layerInput, layer) {
         }
     }
 };
+
 /**
  * converts one-dimensional array into two-dimensional array
  */
+// STATE: OK
 function convertArray(array, columns) {
     if (array.length % columns !== 0) {
         console.log("Array has not the right size(" + array.length + ") for that number of columns(" + columns + ")!");
