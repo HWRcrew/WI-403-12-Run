@@ -123,9 +123,24 @@ function RunGameFrame(Sprites) {
             }
         }
         // check for collision with collisionObjects
-        for (var j = 0; j < Sprites.collisionObjects.length; j++) {
-            var cObject = Sprites.collisionObjects[j];
-            collisionDetection(CurrentPlayer, cObject, true);
+        for (var j = 0; j < Sprites.realCollisionObjects.length; j++) {
+            var cObject = Sprites.realCollisionObjects[j];
+            var collisionSide = collisionDetection(CurrentPlayer, cObject, true);
+            switch (collisionSide) {
+                case "top":
+                    CurrentPlayer.vy = 0;
+                    break;
+                case "bottom":
+                    CurrentPlayer.isOnGround = true;
+                    CurrentPlayer.vy = -CurrentPlayer.gravity;
+                    break;
+                case "left":
+                    break;
+                case "right":
+                    break;
+                default:
+                    break;
+            }
         }
         // Limit for Canvas and bounce effect
         // Left
@@ -186,8 +201,6 @@ function collisionDetection(o1, o2, bounce) {
                     collisionSide = "bottom";
                     //Move the rectangle out of the collision
                     o1.y = o1.y - overlapY;
-                    o1.isOnGround = true;
-                    o1.vy = 0;
                 }
             } else {
                 // collision on Y-Axis

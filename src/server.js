@@ -10,6 +10,11 @@ var port = 1337;
 var Connections = {};
 // Stores Players[], collsionObjects[], killObject[], goalObjects[] and Other[]
 var Sprites = {};
+Sprites.collisionObjects = [];
+Sprites.realCollisionObjects = [];
+Sprites.goalObjects = [];
+Sprites.killObjects = [];
+Sprites.otherObjects = [];
 var MostConcurrentConnections = 0;
 // simple HTTP Server
 var HTTPServer = HTTP.createServer(function(request, response) {});
@@ -24,22 +29,24 @@ var Server = new WebSocketServer({
     httpServer: HTTPServer,
     closeTimeout: 6000
 });
-var map = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 6, 0, 0, 0],
-    [3, 3, 3, 3, 3, 3, 4, 8, 8, 8, 8, 8, 8, 8, 2, 3, 3, 3, 3, 3, 3, 0, 0, 0]
+// TODO remove testmap and read json
+var map1layerCol = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3, 4],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 2, 3, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 0, 0, 0, 3, 3, 3],
+    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 3, 3, 3, 0, 0, 0, 3, 3, 3],
+    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
 ];
 // build map
-buildMap(map);
+// buildMap(map);
+buildLayer(map1layerCol, "collision");
 // ACTION
 // first request from a client
 Server.on("request", function(request) {
@@ -242,128 +249,108 @@ function ConnectionsSize() {
 };
 
 /**
- * mapbuilder
+ * builds single layers
  */
-function buildMap(mapArray) {
-    /**
-     * MapCode
-     */
-    var EMPTY = 0;
-    var GROUNDROUND = 1;
-    var GROUNDLEFTROUND = 2;
-    var GROUNDSTRAIGHT = 3;
-    var GROUNDRIGHTROUND = 4;
-    var EXIT = 5;
-    var DOORBOTTOM = 6;
-    var DOORTOP = 7;
-    var WATER = 8;
-    var ARROW = 9;
-
-    Sprites.collisionObjects = [];
-    Sprites.goalObjects = [];
-    Sprites.killObjects = [];
-    Sprites.otherObjects = [];
-    var ROWS = mapArray.length;
+function buildLayer(layerInput, layer) {
+    var ROWS = layerInput.length;
     var SIZE = 32;
     var tilesheetColumns = 9;
-    // TODO remove existing sprites except players or you will overload the sprites with objects
-    var COLUMNS = mapArray[0].length;
+    var COLLISIONLAYER = "collision";
+    var GOALLAYER = "goal";
+    var KILLLAYER = "kill";
+    var OTHERLAYER = "other";
+    var collision = false;
+    switch (layer) {
+        case COLLISIONLAYER:
+            layer = Sprites.collisionObjects;
+            collision = true;
+            break;
+        case GOALLAYER:
+            layer = Sprites.goalObjects;
+            collision = false;
+            break;
+        case KILLLAYER:
+            layer = Sprites.killObjects;
+            collision = false;
+            break;
+        case OTHERLAYER:
+            layer = Sprites.otherObjects;
+            collision = false;
+            break;
+        default:
+            console.log("Layer unknown!");
+            break;
+    }
+    var COLUMNS = layerInput[0].length;
     for (var row = 0; row < ROWS; row++) {
+        var rectLength = 0;
         for (var column = 0; column < COLUMNS; column++) {
-            var currentTile = mapArray[row][column];
-            if (currentTile == EMPTY) {
-                continue;
+            var currentTile = layerInput[row][column];
+            // for the realCollisionObjects and to summarize them to bigger objects
+            if (collision) {
+                console.log("collision=true");
+                if (currentTile !== 0) {
+                    rectLength++;
+                }
+                // case 1 [0,0,3,3,3,0]
+                if (currentTile === 0 && rectLength > 0) {
+                    // create object with size etc.
+                    var object = Object.create(Game.spriteObject);
+                    object.y = row * SIZE;
+                    object.x = (column - rectLength) * SIZE;
+                    object.width = rectLength * SIZE;
+                    flatten(object);
+                    Sprites.realCollisionObjects.push(object);
+                    rectLength = 0;
+                }
+                // case 2 [0,0,3,3,3]
+                if (column === COLUMNS - 1 && currentTile !== 0) {
+                    var object = Object.create(Game.spriteObject);
+                    object.y = row * SIZE;
+                    object.x = (column - (rectLength - 1)) * SIZE;
+                    object.width = rectLength * SIZE;
+                    flatten(object);
+                    Sprites.realCollisionObjects.push(object);
+                    rectLength = 0;
+                }
             }
             var tileSheetX = Math.floor((currentTile - 1) % tilesheetColumns) * SIZE;
             var tileSheetY = Math.floor((currentTile - 1) / tilesheetColumns) * SIZE;
-            switch (currentTile) {
-                case GROUNDROUND:
-                    var groundround = Object.create(Game.spriteObject);
-                    groundround.sourceX = tileSheetX;
-                    groundround.sourceY = tileSheetY;
-                    groundround.x = column * SIZE;
-                    groundround.y = row * SIZE;
-                    flatten(groundround);
-                    Sprites.collisionObjects.push(groundround);
-                    break;
-                case GROUNDLEFTROUND:
-                    var groundleftround = Object.create(Game.spriteObject);
-                    groundleftround.sourceX = tileSheetX;
-                    groundleftround.sourceY = tileSheetY;
-                    groundleftround.x = column * SIZE;
-                    groundleftround.y = row * SIZE;
-                    flatten(groundleftround);
-                    Sprites.collisionObjects.push(groundleftround);
-                    break;
-                case GROUNDSTRAIGHT:
-                    var groundstraight = Object.create(Game.spriteObject);
-                    groundstraight.sourceX = tileSheetX;
-                    groundstraight.sourceY = tileSheetY;
-                    groundstraight.x = column * SIZE;
-                    groundstraight.y = row * SIZE;
-                    flatten(groundstraight);
-                    Sprites.collisionObjects.push(groundstraight);
-                    break;
-                case GROUNDRIGHTROUND:
-                    var groundrightround = Object.create(Game.spriteObject);
-                    groundrightround.sourceX = tileSheetX;
-                    groundrightround.sourceY = tileSheetY;
-                    groundrightround.x = column * SIZE;
-                    groundrightround.y = row * SIZE;
-                    flatten(groundrightround);
-                    Sprites.collisionObjects.push(groundrightround);
-                    break;
-                case EXIT:
-                    var exit = Object.create(Game.spriteObject);
-                    exit.sourceX = tileSheetX;
-                    exit.sourceY = tileSheetY;
-                    exit.x = column * SIZE;
-                    exit.y = row * SIZE;
-                    flatten(exit);
-                    Sprites.otherObjects.push(exit);
-                    break;
-                case DOORBOTTOM:
-                    var doorbottom = Object.create(Game.spriteObject);
-                    doorbottom.sourceX = tileSheetX;
-                    doorbottom.sourceY = tileSheetY;
-                    doorbottom.x = column * SIZE;
-                    doorbottom.y = row * SIZE;
-                    flatten(doorbottom);
-                    Sprites.goalObjects.push(doorbottom);
-                    break;
-                case DOORTOP:
-                    var doortop = Object.create(Game.spriteObject);
-                    doortop.sourceX = tileSheetX;
-                    doortop.sourceY = tileSheetY;
-                    // handle special doortop height
-                    doortop.height = 16;
-                    doortop.x = column * SIZE;
-                    doortop.y = row * SIZE;
-                    flatten(doortop);
-                    Sprites.goalObjects.push(doortop);
-                    break;
-                case WATER:
-                    var water = Object.create(Game.spriteObject);
-                    water.sourceX = tileSheetX;
-                    water.sourceY = tileSheetY;
-                    water.x = column * SIZE;
-                    water.y = row * SIZE;
-                    flatten(water);
-                    Sprites.killObjects.push(water);
-                    break;
-                case ARROW:
-                    var arrow = Object.create(Game.spriteObject);
-                    arrow.sourceX = tileSheetX;
-                    arrow.sourceY = tileSheetY;
-                    arrow.x = column * SIZE;
-                    arrow.y = row * SIZE;
-                    flatten(arrow);
-                    Sprites.otherObjects.push(arrow);
-                    break;
-                default:
-                    console.log("Unknown tile");
-                    break;
+            if (currentTile !== 0) {
+                var object = Object.create(Game.spriteObject);
+                object.sourceX = tileSheetX;
+                object.sourceY = tileSheetY;
+                object.x = column * SIZE;
+                object.y = row * SIZE;
+                flatten(object);
+                layer.push(object);
             }
         }
+    }
+};
+/**
+ * converts one-dimensional array into two-dimensional array
+ */
+function convertArray(array, columns) {
+    if (array.length % columns !== 0) {
+        console.log("Array has not the right size(" + array.length + ") for that number of columns(" + columns + ")!");
+    } else {
+        // create resulting array
+        var result = new Array(array.length / columns);
+        for (var i = 0; i < result.length; i++) {
+            result[i] = new Array(columns);
+        }
+        var row = 0;
+        var column = 0;
+        // loop over given array to fill result
+        for (var i = 0; i < array.length; i++) {
+            result[row][column] = array[i];
+            column++;
+            if (((i + 1) % columns) === 0) {
+                row++;
+                column = 0;
+            }
+        }
+        return result;
     }
 };
