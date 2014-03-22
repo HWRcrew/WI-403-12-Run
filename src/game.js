@@ -38,8 +38,10 @@ var spriteObject = {
     isOnGround: undefined,
     Name: null,
     // Time for a one maprun in seconds
+    // TODO hold on Connection?
     Time: 0,
     // stunDuration in seconds
+    // TODO find better solution
     stunDuration: 0,
     stunTime: 0,
     stunStart: null
