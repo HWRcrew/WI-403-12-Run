@@ -11,6 +11,8 @@ var Game = require("./game.js");
 var port = 1337;
 // Object to store Connections
 var Connections = {};
+// MaxConnections
+var MaxConnections = 25;
 // Stores Players[], collsionObjects[], killObject[], goalObjects[] and Other[]
 var Sprites = {};
 var MostConcurrentConnections = 0;
@@ -51,6 +53,10 @@ buildMap("map1");
 // ACTION
 // first request from a client
 Server.on("request", function(request) {
+    if (ConnectionsSize >= MaxConnections) {
+        request.reject();
+        return;
+    }
     var Connection = request.accept(null, request.origin);
     Connection.IP = request.remoteAddress;
     // assign random ID to Connection
@@ -95,8 +101,11 @@ Server.on("request", function(request) {
                     Connection.Player = Object.create(Game.spriteObject);
                     Connection.Player.height = 47;
                     Connection.Player.sourceHeight = 47;
-                    Connection.Player.x = Math.floor(Math.random() * (Game.GP.GameWidth - Connection.Player.width));
-                    Connection.Player.y = Math.floor(Math.random() * (Game.GP.GameHeight - Connection.Player.height));
+
+                    Connection.Player.x = 0;
+                    Connection.Player.y = 0;
+                    // Connection.Player.x = Math.floor(Math.random() * (Game.GP.GameWidth - Connection.Player.width));
+                    // Connection.Player.y = Math.floor(Math.random() * (Game.GP.GameHeight - Connection.Player.height));
                     Connection.Player.Name = message.Data.toString().substring(0, 16);
                     // flatten Object
                     Connection.Player = flatten(Connection.Player);
