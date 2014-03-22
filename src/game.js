@@ -139,6 +139,15 @@ function RunGameFrame(Sprites) {
                     break;
             }
         }
+        // check for collision with killObjects
+        for (var j = 0; j < Sprites.killObjects.length; j++) {
+            var kObject = Sprites.killObjects[j];
+            var collisionSide = collisionDetection(CurrentPlayer, kObject, false);
+            if (collisionSide != "none") {
+                CurrentPlayer.x = 0;
+                CurrentPlayer.y = 0;
+            }
+        }
         // Limit for Canvas and bounce effect
         // Left
         if (CurrentPlayer.x < 0) {
