@@ -8,7 +8,6 @@ var Game = require("./game.js");
 var port = 1337;
 // Object to store Connections
 var Connections = {};
-var Connection;
 // Stores Players[], collsionObjects[], killObject[], goalObjects[] and Other[]
 var Sprites = {};
 var MostConcurrentConnections = 0;
@@ -27,18 +26,18 @@ var Server = new WebSocketServer({
 });
 // TODO remove testmap and read json
 var map1layerCol = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3, 4],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 2, 3, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3, 4, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 2, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
 ];
 // build map
 // buildMap(map);
@@ -46,7 +45,7 @@ buildLayer(map1layerCol, "collision");
 // ACTION
 // first request from a client
 Server.on("request", function(request) {
-    Connection = request.accept(null, request.origin);
+    var Connection = request.accept(null, request.origin);
     Connection.IP = request.remoteAddress;
     // assign random ID to Connection
     do {
@@ -147,7 +146,6 @@ Server.on("request", function(request) {
     });
 });
 // game loop on server-side
-// TODO gameloop
 setInterval(function() {
     // gameloop actions
 
@@ -217,14 +215,17 @@ function SendInitialGameState() {
         // store matching IDs
         Indices[ID] = Sprites.Players.length - 1;
     }
-    // broadcast Players to all Clients
-    var json = JSON.stringify({
-        Type: "all",
-        MyID: Indices[Connection.ID],
-        Sprites: Sprites
-    });
-    console.log(new Date() + " GameState-length " + json.length + " in Bytes " + Buffer.byteLength(json, 'utf8'));
-    Connection.sendUTF(json);
+    // broadcast Sprites to all Clients
+    for (var ID in Connections) {
+        var json = JSON.stringify({
+            Type: "all",
+            MyID: Indices[ID],
+            Sprites: Sprites
+        });
+        Connections[ID].sendUTF(json);
+        // log Size of outgoing JSON-String
+        // console.log(new Date() + " GameState-length " + json.length + " in Bytes " + Buffer.byteLength(json, 'utf8'));
+    }
 };
 
 function SendGameState() {
@@ -247,8 +248,9 @@ function SendGameState() {
             MyID: Indices[ID],
             Players: Sprites.Players
         });
-        console.log(new Date() + " GameState-length " + json.length + " in Bytes " + Buffer.byteLength(json, 'utf8'));
         Connections[ID].sendUTF(json);
+        // log Size of outgoing JSON-String
+        // console.log(new Date() + " GameState-length " + json.length + " in Bytes " + Buffer.byteLength(json, 'utf8'));
     }
 }
 // Flatten Object for JSON.stringify
@@ -274,8 +276,6 @@ function ConnectionsSize() {
 /**
  * builds single layers
  */
-// STATE BROKEN
-// TODO fix problem with Server
 function buildLayer(layerInput, layer) {
     var ROWS = layerInput.length;
     var SIZE = 32;
@@ -385,3 +385,6 @@ function convertArray(array, columns) {
         return result;
     }
 };
+
+// TODO MAPLOADER
+function mapLoader() {}
