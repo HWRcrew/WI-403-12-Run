@@ -13,6 +13,8 @@ TileImage.src = "images/tiles.png";
 var backgroundImage = new Image();
 backgroundImage.src = "images/background.png";
 
+var jumpButton;
+
 /**
  * ToDos
  */
@@ -102,12 +104,46 @@ document.addEventListener("keyup", function(key) {
         }));
     }
 });
+
+// begin mobile
+document.addEventListener("touchstart", function(event) {
+    var Transmit = false;
+    if (event.target == jumpButton) {
+        Transmit = true;
+        KeysPressed |= 1;
+    }
+    if (Transmit && Connection && Connection.readyState == 1) {
+        Connection.send(JSON.stringify({
+            Type: "keydown",
+            Data: "38"
+        }));
+    }
+});
+document.addEventListener("touchend", function(event) {
+    var Transmit = false;
+    if (event.target == jumpButton) {
+        Transmit = true;
+        KeysPressed &= ~1;
+    }
+    if (Transmit && Connection && Connection.readyState == 1) {
+        Connection.send(JSON.stringify({
+            Type: "keyup",
+            Data: "38"
+        }));
+    }
+});
+// end mobile
+
 // window load
 window.addEventListener("load", function() {
     var GameCanvas = document.querySelector("canvas");
     GameCanvas.width = GP.GameWidth;
     GameCanvas.height = GP.GameHeight;
     GraphicsContext = GameCanvas.getContext("2d");
+
+    // add jumpButton for eventListener
+    jumpButton = document.querySelector("#jumpButton")
+
     // use MozWebSocket if provided by firefox
     window.WebSocket = window.WebSocket || window.MozWebSocket;
     // inform client about missing WebSocket support
@@ -136,7 +172,7 @@ window.addEventListener("load", function() {
              */
             // UP
             if (KeysPressed & 1 && MyPlayer.isOnGround) {
-                MyPlayer.vy += GameJumpForce;
+                MyPlayer.vy += GP.GameJumpForce;
                 MyPlayer.isOnGround = false;
                 MyPlayer.friction = 1;
             }
