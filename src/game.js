@@ -10,7 +10,7 @@ var GP = {
     // GameFrameTime in milliseconds
     GameFrameTime: 30,
     GameFriction: 0.8,
-    GameGravity: 0.6,
+    GameGravity: 0.7,
     GameBounce: -0.7,
     GameStunTime: 2,
     GameJumpForce: -10,
@@ -100,10 +100,6 @@ function RunGameFrame(Sprites) {
         // move Player | apply velocity to player
         CurrentPlayer.x += CurrentPlayer.vx;
         CurrentPlayer.y += CurrentPlayer.vy;
-        // apply offset
-        // TODO replace simple solution
-        CurrentPlayer.offsetX += CurrentPlayer.vx;
-        // CurrentPlayer.offsetY += CurrentPlayer.vy;
         // check for collision Player VS Player
         for (var j = 0; j < Sprites.Players.length; j++) {
             if (j == i) {
@@ -113,6 +109,8 @@ function RunGameFrame(Sprites) {
             var collisionSide = collisionDetection(CurrentPlayer, opponent, true);
             // TODO handle collisionside
             if (collisionSide == "bottom") {
+                CurrentPlayer.isOnGround = true;
+                CurrentPlayer.vy = -GP.GameGravity;
                 // stun in seconds
                 opponent.stunTime = GP.GameStunTime;
                 opponent.stunDuration = opponent.stunTime;
@@ -137,6 +135,9 @@ function RunGameFrame(Sprites) {
                     break;
                 default:
                     break;
+            }
+            if (collisionSide !== "bottom" && CurrentPlayer.vy > 0) {
+                CurrentPlayer.isOnGround = false;
             }
         }
         // check for collision with killObjects
