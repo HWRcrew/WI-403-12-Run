@@ -113,6 +113,8 @@ function RunGameFrame(Sprites) {
             var collisionSide = collisionDetection(CurrentPlayer, opponent, true);
             // TODO handle collisionside
             if (collisionSide == "bottom") {
+                CurrentPlayer.isOnGround = true;
+                CurrentPlayer.vy = -GP.GameGravity;
                 // stun in seconds
                 opponent.stunTime = GP.GameStunTime;
                 opponent.stunDuration = opponent.stunTime;
