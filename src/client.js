@@ -21,7 +21,7 @@ var jumpButton;
 // TODO Lobbies
 // TODO Time Tracking
 // TODO Animationmovement drawImage sy sx sw sh
-// TODO Maps
+// TODO isOnGround is not set to false when falling from platform (jump while falling is possible)
 // TODO Game-Ending / Flag finish? How to check
 // TODO DB - Input with Highscores
 /*
@@ -206,7 +206,6 @@ window.addEventListener("load", function() {
                 MyPlayer.accelerationY = 0;
                 MyPlayer.accelerationX = 0;
             }
-            // TODO @issue blinking on jump
             RunGameFrame(Sprites);
             DrawGame();
 

@@ -10,7 +10,7 @@ var GP = {
     // GameFrameTime in milliseconds
     GameFrameTime: 30,
     GameFriction: 0.8,
-    GameGravity: 0.6,
+    GameGravity: 0.7,
     GameBounce: -0.7,
     GameStunTime: 2,
     GameJumpForce: -10,
@@ -137,6 +137,9 @@ function RunGameFrame(Sprites) {
                     break;
                 default:
                     break;
+            }
+            if (collisionSide !== "bottom" && CurrentPlayer.vy > 0) {
+                CurrentPlayer.isOnGround = false;
             }
         }
         // check for collision with killObjects
