@@ -324,7 +324,11 @@ function DrawGame() {
             sprite.sourceY = 0;
             sprite.sourceHeight = 45;
 
-            if(sprite.isOnGround == false){
+
+            if(sprite.stunDuration > 0){
+                sprite.sourceX = 13*SIZE;
+            }
+            else if(sprite.isOnGround == false){
                 if(sprite.accelerationX > 0){
                     sprite.sourceX = 12*SIZE;
                 }
