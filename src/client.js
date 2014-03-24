@@ -7,7 +7,7 @@ var GameLoop = null;
 var MyPlayer = null;
 var KeysPressed = 0;
 var SpriteImage = new Image();
-SpriteImage.src = "images/sprites_1.png";
+SpriteImage.src = "images/sprites.png";
 var TileImage = new Image();
 TileImage.src = "images/tiles.png";
 var backgroundImage = new Image();
@@ -311,6 +311,7 @@ function DrawGame() {
     */
 
     var SIZE = 32;
+    var HEIGHT = 45;
 
 
     if (counterRight > 11) {
@@ -322,9 +323,8 @@ function DrawGame() {
 
     for (var i = 0; i < Sprites.Players.length; i++) {
         sprite = Sprites.Players[i];
-        sprite.sourceY = 0;
         sprite.sourceHeight = 45;
-
+        sprite.sourceY = sprite.Col * HEIGHT;
 
         if (sprite.stunDuration > 0) {
             sprite.sourceX = 13 * SIZE;
