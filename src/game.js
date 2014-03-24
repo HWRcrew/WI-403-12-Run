@@ -37,6 +37,8 @@ var spriteObject = {
     // gravity: GP.GameGravity,
     isOnGround: undefined,
     Name: null,
+    // number from 1 to 4 for the colors
+    Col: null,
     // Time for a one maprun in seconds
     // TODO hold on Connection?
     Time: 0,

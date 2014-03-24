@@ -265,6 +265,7 @@ window.addEventListener("load", function() {
 // Function for drawing of the current Game-State
 var counterRight = 1;
 var counterLeft = 14;
+
 function DrawGame() {
     // Clear the screen
     GraphicsContext.clearRect(0, 0, GP.GameWidth, GP.GameHeight);
@@ -308,64 +309,58 @@ function DrawGame() {
     Animated Player Images
 
     */
-    
-        var SIZE = 32;
+
+    var SIZE = 32;
 
 
-        if(counterRight >11){
-            counterRight = 1;
+    if (counterRight > 11) {
+        counterRight = 1;
+    }
+    if (counterLeft > 24) {
+        counterLeft = 14;
+    }
+
+    for (var i = 0; i < Sprites.Players.length; i++) {
+        sprite = Sprites.Players[i];
+        sprite.sourceY = 0;
+        sprite.sourceHeight = 45;
+
+
+        if (sprite.stunDuration > 0) {
+            sprite.sourceX = 13 * SIZE;
+        } else if (sprite.isOnGround == false) {
+            if (sprite.accelerationX > 0) {
+                sprite.sourceX = 12 * SIZE;
+            } else if (sprite.accelerationX < 0) {
+                sprite.sourceX = 25 * SIZE;
+            } else {
+                sprite.sourceX = 12 * SIZE;
+            }
+
+        } else if (sprite.accelerationX > 0) {
+            sprite.sourceX = counterRight * SIZE;
+            counterRight++;
+        } else if (sprite.accelerationX < 0) {
+            sprite.sourceX = counterLeft * SIZE;
+            counterLeft++;
+        } else {
+            sprite.sourceX = 0;
         }
-        if(counterLeft >24){
-            counterLeft = 14;
-        }
 
-        for (var i = 0; i < Sprites.Players.length; i++) {
-            sprite = Sprites.Players[i];
-            sprite.sourceY = 0;
-            sprite.sourceHeight = 45;
-
-
-            if(sprite.stunDuration > 0){
-                sprite.sourceX = 13*SIZE;
-            }
-            else if(sprite.isOnGround == false){
-                if(sprite.accelerationX > 0){
-                    sprite.sourceX = 12*SIZE;
-                }
-                else if(sprite.accelerationX < 0){
-                    sprite.sourceX = 25*SIZE;
-                }
-                else{
-                    sprite.sourceX = 12*SIZE;
-                }
-                
-            }
-            else if(sprite.accelerationX > 0){
-                sprite.sourceX = counterRight*SIZE;
-                counterRight++;
-            }
-            else if(sprite.accelerationX < 0){
-                sprite.sourceX = counterLeft*SIZE;
-                counterLeft++;
-            }
-            else{
-                sprite.sourceX = 0;
-            }
-        
         //alert(sprite.sourceHeight);
         GraphicsContext.drawImage(SpriteImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x, sprite.y, sprite.sourceWidth, sprite.sourceHeight);
-        
 
-             // draw Name above every Player
-            if (Sprites.Players[i].Name) {
-                // Decide wether it is me or someone else
-                if (Sprites.Players[i] == MyPlayer) {
-                    GraphicsContext.fillText("Le Me " + Sprites.Players[i].stunDuration, Sprites.Players[i].x, Sprites.Players[i].y);
-                } else {
-                    GraphicsContext.fillText(Sprites.Players[i].Name, Sprites.Players[i].x, Sprites.Players[i].y);
-                }
+
+        // draw Name above every Player
+        if (Sprites.Players[i].Name) {
+            // Decide wether it is me or someone else
+            if (Sprites.Players[i] == MyPlayer) {
+                GraphicsContext.fillText("Le Me " + Sprites.Players[i].stunDuration, Sprites.Players[i].x, Sprites.Players[i].y);
+            } else {
+                GraphicsContext.fillText(Sprites.Players[i].Name, Sprites.Players[i].x, Sprites.Players[i].y);
             }
         }
+    }
     /*
 
     for (var i = 0; i < Sprites.Players.length; i++) {

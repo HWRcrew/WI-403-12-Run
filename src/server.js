@@ -91,6 +91,8 @@ Server.on("request", function(request) {
                     // Connection.Player.x = Math.floor(Math.random() * (Game.GP.GameWidth - Connection.Player.width));
                     // Connection.Player.y = Math.floor(Math.random() * (Game.GP.GameHeight - Connection.Player.height));
                     Connection.Player.Name = message.Data.toString().substring(0, 16);
+                    Connection.Player.Col = Math.floor((Math.random() * 4) + 1);
+
                     // flatten Object
                     Connection.Player = flatten(Connection.Player);
                     // initial KeysPressed on serverside
