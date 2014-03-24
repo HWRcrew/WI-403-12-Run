@@ -83,8 +83,8 @@ Server.on("request", function(request) {
                     }
                     // create Player at random position in Canvas
                     Connection.Player = Object.create(Game.spriteObject);
-                    Connection.Player.height = 47;
-                    Connection.Player.sourceHeight = 47;
+                    Connection.Player.height = 45;
+                    Connection.Player.sourceHeight = 45;
 
                     Connection.Player.x = 0;
                     Connection.Player.y = 0;
