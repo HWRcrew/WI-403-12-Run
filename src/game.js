@@ -100,10 +100,6 @@ function RunGameFrame(Sprites) {
         // move Player | apply velocity to player
         CurrentPlayer.x += CurrentPlayer.vx;
         CurrentPlayer.y += CurrentPlayer.vy;
-        // apply offset
-        // TODO replace simple solution
-        CurrentPlayer.offsetX += CurrentPlayer.vx;
-        // CurrentPlayer.offsetY += CurrentPlayer.vy;
         // check for collision Player VS Player
         for (var j = 0; j < Sprites.Players.length; j++) {
             if (j == i) {
