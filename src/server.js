@@ -46,8 +46,7 @@ Server.on("request", function (request) {
 	// add Connection to Connections
 	Connections[Connection.ID] = Connection;
 	//	log connection with user-agent
-	logger.info("IP " + (Connection.IP) + " connected \tID: " +
-		Connection.ID + " | most: " + " | User-Agent: " + request.httpRequest.headers['user-agent']);
+	logger.info("IP " + (Connection.IP) + " connected \tID: " + Connection.ID + " | User-Agent: " + request.httpRequest.headers['user-agent']);
 	// on message
 	Connection.on("message", function (message) {
 		if (message.type == "utf8") {
@@ -69,7 +68,7 @@ Server.on("request", function (request) {
 			 */
 			switch (message.Type) {
 			case "handshake":
-				logger.info("IP " + Connection.IP + " - handshake with: " + (message.Data).toString());
+				logger.info("IP " + Connection.IP + " ID: " + Connection.ID + " - handshake with: " + (message.Data).toString());
 				// abort if Connection already spawned a player
 				if (Connection.Player) {
 					break;
