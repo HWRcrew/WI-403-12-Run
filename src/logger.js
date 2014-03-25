@@ -8,7 +8,7 @@ var logger = new(winston.Logger)({
 			colorize: true
 		}),
     new winston.transports.File({
-			filename: __dirname + '/node.log',
+			filename: __dirname + '/application.log',
 			json: false
 		})
   ],

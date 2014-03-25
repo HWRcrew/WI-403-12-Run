@@ -1,8 +1,5 @@
 var logger = require('./logger.js');
-// colors in logger.log
-var colors = require('colors');
 var HTTP = require("http");
-// File System
 var fs = require('fs');
 var MapPath = "./maps/";
 var WebSocketServer = require("websocket").server;
@@ -16,7 +13,6 @@ var Connections = {};
 var MaxConnections = 25;
 // Stores Players[], collsionObjects[], killObject[], goalObjects[] and Other[]
 var Sprites = {};
-var MostConcurrentConnections = 0;
 // simple HTTP Server
 var HTTPServer = HTTP.createServer(function (request, response) {});
 
@@ -31,14 +27,13 @@ var Server = new WebSocketServer({
 	closeTimeout: 6000
 });
 
-
 // build map
 buildMap("map1");
 
 // ACTION
 // first request from a client
 Server.on("request", function (request) {
-	if (ConnectionsSize >= MaxConnections) {
+	if (ConnectionsSize() >= MaxConnections) {
 		request.reject();
 		return;
 	}
@@ -50,12 +45,9 @@ Server.on("request", function (request) {
 	} while (Connection.ID in Connections);
 	// add Connection to Connections
 	Connections[Connection.ID] = Connection;
-	// check the most sametime connections for logging
-	if (MostConcurrentConnections < ConnectionsSize()) {
-		MostConcurrentConnections = ConnectionsSize();
-	}
-	// log new Connection
-	//	console.info((new Date()) + " IP " + (Connection.IP).green + " - connected \tID: " + (Connection.ID).toString().yellow + " - Connections: " + ConnectionsSize() + " | most: " + MostConcurrentConnections);
+	//	log connection with user-agent
+	logger.info("IP " + (Connection.IP) + " connected \tID: " +
+		Connection.ID + " | most: " + " | User-Agent: " + request.httpRequest.headers['user-agent']);
 	// on message
 	Connection.on("message", function (message) {
 		if (message.type == "utf8") {
@@ -63,7 +55,7 @@ Server.on("request", function (request) {
 			try {
 				message = JSON.parse(message.utf8Data);
 			} catch (error) {
-				console.error((new Date()) + " JSON parsing error: ", error);
+				logger.error("JSON parsing error: ", error);
 			}
 			/* differentiate between message-types
 			 * TYPES:
@@ -77,7 +69,7 @@ Server.on("request", function (request) {
 			 */
 			switch (message.Type) {
 			case "handshake":
-				console.info((new Date()) + " IP " + (Connection.IP).green + " - handshake with: " + (message.Data).toString().blue);
+				logger.info("IP " + Connection.IP + " - handshake with: " + (message.Data).toString());
 				// abort if Connection already spawned a player
 				if (Connection.Player) {
 					break;
@@ -86,7 +78,6 @@ Server.on("request", function (request) {
 				Connection.Player = Object.create(Game.spriteObject);
 				Connection.Player.height = 45;
 				Connection.Player.sourceHeight = 45;
-
 				Connection.Player.x = 0;
 				Connection.Player.y = 0;
 				// Connection.Player.x = Math.floor(Math.random() * (Game.GP.GameWidth - Connection.Player.width));
@@ -142,7 +133,7 @@ Server.on("request", function (request) {
 	Connection.on("close", function () {
 		// remove Connection from Connections
 		if (Connection.ID in Connections) {
-			console.info((new Date()) + " IP " + Connection.IP.green + " - disconnected \tID: " + (Connection.ID).toString().yellow);
+			logger.info("IP " + Connection.IP + " - disconnected \tID: " + Connection.ID);
 			delete Connections[Connection.ID];
 		}
 	});
