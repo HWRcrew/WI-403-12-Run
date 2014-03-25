@@ -14,6 +14,8 @@ var backgroundImage = new Image();
 backgroundImage.src = "images/background.png";
 
 var jumpButton;
+var leftButton;
+var rightButton;
 
 /**
  * ToDos
@@ -108,27 +110,51 @@ document.addEventListener("keyup", function(key) {
 // begin mobile
 document.addEventListener("touchstart", function(event) {
     var Transmit = false;
+    var key;
     if (event.target == jumpButton) {
         Transmit = true;
         KeysPressed |= 1;
+        key = 38;
+    }
+    if (event.target == leftButton) {
+        Transmit = true;
+        KeysPressed |= 2;
+        key = 37;
+    }
+    if (event.target == rightButton) {
+        Transmit = true;
+        KeysPressed |= 4;
+        key = 39;
     }
     if (Transmit && Connection && Connection.readyState == 1) {
         Connection.send(JSON.stringify({
             Type: "keydown",
-            Data: "38"
+            Data: key
         }));
     }
 });
 document.addEventListener("touchend", function(event) {
     var Transmit = false;
+    var key;
     if (event.target == jumpButton) {
         Transmit = true;
         KeysPressed &= ~1;
+        key = 38
+    }
+    if (event.target == leftButton) {
+        Transmit = true;
+        KeysPressed &= ~2;
+        key = 37
+    }
+    if (event.target == rightButton) {
+        Transmit = true;
+        KeysPressed &= ~4;
+        key = 39
     }
     if (Transmit && Connection && Connection.readyState == 1) {
         Connection.send(JSON.stringify({
             Type: "keyup",
-            Data: "38"
+            Data: key
         }));
     }
 });
@@ -142,7 +168,9 @@ window.addEventListener("load", function() {
     GraphicsContext = GameCanvas.getContext("2d");
 
     // add jumpButton for eventListener
-    jumpButton = document.querySelector("#jumpButton")
+    jumpButton = document.querySelector("#jumpButton");
+    leftButton = document.querySelector("#leftButton");
+    rightButton = document.querySelector("#rightButton");
 
     // use MozWebSocket if provided by firefox
     window.WebSocket = window.WebSocket || window.MozWebSocket;
