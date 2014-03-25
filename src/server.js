@@ -46,7 +46,7 @@ Server.on("request", function (request) {
 	// add Connection to Connections
 	Connections[Connection.ID] = Connection;
 	//	log connection with user-agent
-	logger.info("IP " + Connection.IP + " ID: " + Connection.ID + " connected | user-agent: " + request.httpRequest.headers['user-agent']);
+	logger.info("IP " + Connection.IP + " ID: " + Connection.ID + " | user-agent: " + request.httpRequest.headers['user-agent']);
 	// on message
 	Connection.on("message", function (message) {
 		if (message.type == "utf8") {
