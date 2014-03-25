@@ -47,6 +47,7 @@ var rightButton;
 
 // Input-Handling
 document.addEventListener("keydown", function(key) {
+
     // bool to check if we transmit the input
     var Transmit = false;
     // check if the key is * and is not already pressed
@@ -109,6 +110,7 @@ document.addEventListener("keyup", function(key) {
 
 // begin mobile
 document.addEventListener("touchstart", function(event) {
+    event.preventDefault();
     var Transmit = false;
     var key;
     if (event.target == jumpButton) {
@@ -134,6 +136,7 @@ document.addEventListener("touchstart", function(event) {
     }
 });
 document.addEventListener("touchend", function(event) {
+    event.preventDefault();
     var Transmit = false;
     var key;
     if (event.target == jumpButton) {
