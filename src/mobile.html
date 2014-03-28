@@ -12,8 +12,10 @@
     <!-- Andriod -->
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="shortcut icon" sizes="144x144" href="images/staffrace-logo-144x144.png">
-    <link title="portrait" rel="stylesheet" type="text/css" href="ipad-portrait.css" disabled="true">
-    <link title="landscape" rel="stylesheet" type="text/css" href="ipad-landscape.css" disabled="true">
+    <link title="ipad-portrait" rel="stylesheet" type="text/css" href="css/ipad-portrait.css" disabled="true">
+    <link title="ipad-landscape" rel="stylesheet" type="text/css" href="css/ipad-landscape.css" disabled="true">
+    <link title="iphone-portrait" rel="stylesheet" type="text/css" href="css/iphone-portrait.css" disabled="true">
+    <link title="iphone-landscape" rel="stylesheet" type="text/css" href="css/iphone-landscape.css" disabled="true">
     <title>Staffrace - Mobile</title>
     <script src="game.js" type="text/javascript" charset="utf-8"></script>
     <script src="client.js" type="text/javascript" charset="utf-8"></script>
@@ -21,37 +23,59 @@
     
     var landscape = false;
     var portrait = false;
+    var iPad = false;
+    var iPhone = false;
 
-    // var heightA = window.screen.availHeight;
-    // var widthA = window.screen.availWidth;
-      // alert(heightA);
-      // alert(widthA);
+    function detectUserAgent(){      
+
+      if(navigator.userAgent.match(/iPhone/i)){
+        iPhone = true;
+        console.log("iPhone");
+      } 
+      if(navigator.userAgent.match(/iPad/i)){
+        iPad = true;
+        console.log("iPad");
+      }
+
+      readDeviceOrientation();                    
+
+    }
+
     function readDeviceOrientation() {
-      alert("inside readDeviceOrientation");
-                    
+      // alert("inside readDeviceOrientation");
       if (Math.abs(window.orientation) === 90) {
         // Landscape
         landscape = true;
-        alert("landscape");
-        switchOrientation("landscape");
+        // alert("landscape");
+        if(iPad){
+          switchOrientation("ipad-landscape");
+        }
+        if(iPhone){
+          switchOrientation("iphone-landscape");
+        }
       } else {
         // Portrait
         portrait = true;
-        alert("portrait");
-        switchOrientation("portrait");
+        // alert("portrait");
+        if(iPad){
+          switchOrientation("ipad-portrait");
+        }
+        if(iPhone){
+          switchOrientation("iphone-portrait");
+        }
       }
     }
 
     function switchOrientation(s){
-      alert("inside switchOrientation");
+      // alert("inside switchOrientation");
         var stylesheet = document.getElementsByTagName("link");
         for (var i = 0; i < stylesheet.length; i++ ) {
           if (stylesheet[i].getAttribute("rel").indexOf("stylesheet") != -1 && stylesheet[i].getAttribute("title")) {
             stylesheet[i].disabled = true;
-            alert("something disabled");
+            // alert("something disabled");
             if (stylesheet[i].getAttribute("title") == s) {
               stylesheet[i].disabled = false;
-              alert("something enabled");
+              // alert("something enabled");
             }
           }
         }
@@ -73,7 +97,7 @@
     -webkit-user-select: none;
     </style>
   </head>
-  <body onload="readDeviceOrientation();">
+  <body onload="detectUserAgent();">
     <div id="wrapper">
       <canvas id="canvas" style="border: 5px solid black">
       <p>Your Browser does not support canvas!</p>
