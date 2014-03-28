@@ -1,0 +1,8 @@
+canvas {
+    overflow: hidden;
+    image-rendering: optimizeSpeed;
+    -ms-interpolation-mode: nearest-neighbor;
+    -webkit-optimize-contrast;
+    width:auto;
+    height:1004px;
+    }

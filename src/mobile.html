@@ -12,16 +12,53 @@
     <!-- Andriod -->
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="shortcut icon" sizes="144x144" href="images/staffrace-logo-144x144.png">
+    <link title="portrait" rel="stylesheet" type="text/css" href="ipad-portrait.css" disabled="true">
+    <link title="landscape" rel="stylesheet" type="text/css" href="ipad-landscape.css" disabled="true">
     <title>Staffrace - Mobile</title>
     <script src="game.js" type="text/javascript" charset="utf-8"></script>
     <script src="client.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
- 
-      var heightA = window.screen.availHeight;
-      var widthA = window.screen.availWidth;
+    
+    var landscape = false;
+    var portrait = false;
+
+    // var heightA = window.screen.availHeight;
+    // var widthA = window.screen.availWidth;
       // alert(heightA);
       // alert(widthA);
-      
+    function readDeviceOrientation() {
+      alert("inside readDeviceOrientation");
+                    
+      if (Math.abs(window.orientation) === 90) {
+        // Landscape
+        landscape = true;
+        alert("landscape");
+        switchOrientation("landscape");
+      } else {
+        // Portrait
+        portrait = true;
+        alert("portrait");
+        switchOrientation("portrait");
+      }
+    }
+
+    function switchOrientation(s){
+      alert("inside switchOrientation");
+        var stylesheet = document.getElementsByTagName("link");
+        for (var i = 0; i < stylesheet.length; i++ ) {
+          if (stylesheet[i].getAttribute("rel").indexOf("stylesheet") != -1 && stylesheet[i].getAttribute("title")) {
+            stylesheet[i].disabled = true;
+            alert("something disabled");
+            if (stylesheet[i].getAttribute("title") == s) {
+              stylesheet[i].disabled = false;
+              alert("something enabled");
+            }
+          }
+        }
+    }
+
+    window.onorientationchange = readDeviceOrientation;
+
     </script>
     <style type="text/css" media="screen">
     html, body {
@@ -29,14 +66,6 @@
     padding: 0px;
     height: 100%;
     overflow: hidden; }
-    canvas {
-    overflow: hidden;
-    image-rendering: optimizeSpeed;
-    -ms-interpolation-mode: nearest-neighbor;
-    -webkit-optimize-contrast;
-    width:auto;
-    height:768px;
-    }
     :webkit-full-screen {
     width: 100%;
     height: 100%;
@@ -44,7 +73,7 @@
     -webkit-user-select: none;
     </style>
   </head>
-  <body>
+  <body onload="readDeviceOrientation();">
     <div id="wrapper">
       <canvas id="canvas" style="border: 5px solid black">
       <p>Your Browser does not support canvas!</p>
