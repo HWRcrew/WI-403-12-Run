@@ -31,7 +31,7 @@ var Server = new WebSocketServer({
 });
 
 // build map
-var ActualMap = new Map("map2");
+var ActualMap = new Map("map1");
 ActualMap.buildMap();
 console.log("actual asdf" + JSON.stringify(ActualMap));
 Sprites.Map = ActualMap;
