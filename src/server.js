@@ -6,7 +6,8 @@ var WebSocketServer = require("websocket").server;
 // imports game.js
 var Game = require("./game.js");
 var helpers = require("./helpers");
-var maploader = require('./maploader.js');
+var Map = require('./map.js');
+console.log(Map);
 // Port
 var port = 1337;
 // Object to store Connections
@@ -30,7 +31,10 @@ var Server = new WebSocketServer({
 });
 
 // build map
-maploader.buildMap(Sprites, "map1");
+var ActualMap = new Map("map2");
+ActualMap.buildMap();
+console.log("actual asdf" + JSON.stringify(ActualMap));
+Sprites.Map = ActualMap;
 
 // ACTION
 // first request from a client
@@ -197,24 +201,11 @@ setInterval(function () {
  */
 // send GameState to Clients
 function SendInitialGameState() {
-	Sprites.Players = [];
-	// helping hash map with connection IDs and PlayersData IDs;
-	var Indices = {};
-	// store the Player of every Connection in Players
-	for (var ID in Connections) {
-		if (!Connections[ID].Player) {
-			continue;
-		}
-		Sprites.Players.push(Connections[ID].Player);
-		// store matching IDs
-		Indices[ID] = Sprites.Players.length - 1;
-	}
-	// broadcast Sprites to all Clients
+	// broadcast map to all Clients
 	for (var ID in Connections) {
 		var json = JSON.stringify({
-			Type: "all",
-			MyID: Indices[ID],
-			Sprites: Sprites
+			Type: "map",
+			Map: Sprites.Map
 		});
 		Connections[ID].sendUTF(json);
 	}
@@ -238,7 +229,7 @@ function SendGameState() {
 		var json = JSON.stringify({
 			Type: "players",
 			MyID: Indices[ID],
-			Players: Sprites.Players
+			Players: Sprites.Players,
 		});
 		Connections[ID].sendUTF(json);
 	}
