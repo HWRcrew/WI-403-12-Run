@@ -94,9 +94,17 @@ function RunGameFrame(Sprites) {
 		if (CurrentPlayer.vy > GP.GameSpeedLimit * 2) {
 			CurrentPlayer.vy = GP.GameSpeedLimit * 2;
 		}
+		// round velocity
+		CurrentPlayer.vx = Number((CurrentPlayer.vx).toFixed(3));
+		CurrentPlayer.vy = Number((CurrentPlayer.vy).toFixed(3));
+
 		// move Player | apply velocity to player
 		CurrentPlayer.x += CurrentPlayer.vx;
 		CurrentPlayer.y += CurrentPlayer.vy;
+		// round it / ceiling or flooring wont work (example 243.003 242.8999)
+		CurrentPlayer.x = Number((CurrentPlayer.x).toFixed(0));
+		CurrentPlayer.y = Number((CurrentPlayer.y).toFixed(0));
+
 		// check for collision Player VS Player
 		for (var j = 0; j < Sprites.Players.length; j++) {
 			if (j == i) {
@@ -134,6 +142,7 @@ function RunGameFrame(Sprites) {
 				break;
 			}
 			if (collisionSide !== "bottom" && CurrentPlayer.vy > 0) {
+				//TODO check rounding bug with player 
 				CurrentPlayer.isOnGround = false;
 			}
 		}

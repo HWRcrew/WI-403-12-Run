@@ -12,8 +12,8 @@ var TileImage = new Image();
 TileImage.src = "images/tiles.png";
 var backgroundImage = new Image();
 backgroundImage.src = "images/background.png";
-var clientState = "loading";
 //loading, playing
+var clientState = "loading";
 
 var jumpButton;
 var leftButton;
@@ -441,8 +441,6 @@ function DrawGame() {
 	// Set font for Playername
 	GraphicsContext.font = "8pt Arial";
 	GraphicsContext.drawImage(backgroundImage, 0, 0);
-	// translate the canvas - so you move it around the map
-	// GraphicsContext.translate(MyPlayer.offsetX, MyPlayer.offsetY);
 	// draw collisionObjects[]
 	if (Sprites.Map.sprites.collisionObjects) {
 		for (var i = 0; i < Sprites.Map.sprites.collisionObjects.length; i++) {
@@ -475,10 +473,8 @@ function DrawGame() {
 	// draw Players[]
 
 	/*
-    Animated Player Images
-
-    */
-
+	 * Animate Player Images
+	 */
 	var SIZE = 32;
 	var HEIGHT = 45;
 
@@ -515,8 +511,6 @@ function DrawGame() {
 		} else {
 			sprite.sourceX = 0;
 		}
-
-		//alert(sprite.sourceHeight);
 		GraphicsContext.drawImage(SpriteImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x - camera.xView, sprite.y - camera.yView, sprite.sourceWidth, sprite.sourceHeight);
 
 		// draw Name above every Player
