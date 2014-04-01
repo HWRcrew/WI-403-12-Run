@@ -332,14 +332,14 @@ window.addEventListener("load", function () {
 					GameCanvas = document.querySelector("canvas");
 					// TODO store size somewhere else
 					// Version for standard
-					// GameCanvas.width = 768;
-					// GameCanvas.height = 384;
+					GameCanvas.width = 768;
+					GameCanvas.height = 384;
 
 					// Version for megascreen
-					var h = document.documentElement.clientHeight;
-					var w = document.documentElement.clientWidth;
-					GameCanvas.width = (Math.floor(w / 32) - 4) * 32;
-					GameCanvas.height = (Math.floor(h / 32) - 4) * 32;
+					//					var h = document.documentElement.clientHeight;
+					//					var w = document.documentElement.clientWidth;
+					//					GameCanvas.width = (Math.floor(w / 32) - 4) * 32;
+					//					GameCanvas.height = (Math.floor(h / 32) - 4) * 32;
 
 					GraphicsContext = GameCanvas.getContext("2d");
 					camera = new Game.Camera(0, 0, GameCanvas.width, GameCanvas.height, Sprites.Map.width, Sprites.Map.height);
