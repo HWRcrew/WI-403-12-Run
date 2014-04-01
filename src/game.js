@@ -6,7 +6,7 @@ var GP = {
 	GameGravity: 0.7,
 	GameBounce: -0.7,
 	GameStunTime: 2,
-	GameJumpForce: -10,
+	GameJumpForce: -12,
 	GameSpeedLimit: 5,
 	tileBlockSize: 32,
 	tileColumns: 9
