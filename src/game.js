@@ -12,7 +12,7 @@ var GP = {
 	tileColumns: 9
 };
 
-// Stores Players[], collsionObjects[], killObject[], goalObjects[] and otherObjects[]
+// Stores Players[], collsionObjects[], killObject[], goalObjects[] otherObjects[] and backObjects[]
 var Sprites = {};
 var spriteObject = {
 	// properties for everyone

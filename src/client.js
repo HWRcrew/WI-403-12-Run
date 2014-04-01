@@ -438,9 +438,17 @@ var counterLeft = 14;
 function DrawGame() {
 	// Clear the screen
 	GraphicsContext.clearRect(0, 0, camera.viewportRect.width, camera.viewportRect.height);
-	// Set font for Playername
-	GraphicsContext.font = "8pt Arial";
-	GraphicsContext.drawImage(backgroundImage, 0, 0);
+	GraphicsContext.fillStyle = Sprites.Map.backgroundColor;
+	//	console.log("test" + Sprites.Map.backgroundColor);
+	GraphicsContext.fillRect(0, 0, camera.viewportRect.width, camera.viewportRect.height);
+	// draw backObjects[]
+	if (Sprites.Map.sprites.backObjects) {
+		for (var i = 0; i < Sprites.Map.sprites.backObjects.length; i++) {
+			sprite = Sprites.Map.sprites.backObjects[i];
+			GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x - camera.xView, sprite.y - camera.yView, sprite.sourceWidth, sprite.sourceHeight);
+		}
+	}
+
 	// draw collisionObjects[]
 	if (Sprites.Map.sprites.collisionObjects) {
 		for (var i = 0; i < Sprites.Map.sprites.collisionObjects.length; i++) {
@@ -514,6 +522,9 @@ function DrawGame() {
 		GraphicsContext.drawImage(SpriteImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x - camera.xView, sprite.y - camera.yView, sprite.sourceWidth, sprite.sourceHeight);
 
 		// draw Name above every Player
+		// Set font for Playername
+		GraphicsContext.font = "8pt Arial";
+		GraphicsContext.fillStyle = "#000000";
 		if (Sprites.Players[i].Name) {
 			// Decide wether it is me or someone else
 			if (Sprites.Players[i] == MyPlayer) {

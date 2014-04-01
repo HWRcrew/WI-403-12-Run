@@ -20,8 +20,8 @@ Map.prototype.buildMap = function (name) {
 	fs.exists(file, function (exists) {
 		if (exists) {
 			var json = JSON.parse(fs.readFileSync(file, 'utf8'));
-			map.width = json.layers[0].width * Game.GP.GameBlockSize;
-			map.height = json.layers[0].height * Game.GP.GameBlockSize;
+			map.width = json.width * Game.GP.GameBlockSize;
+			map.height = json.height * Game.GP.GameBlockSize;
 			if (json.backgroundcolor) {
 				map.backgroundColor = json.backgroundcolor;
 			} else {
@@ -29,7 +29,7 @@ Map.prototype.buildMap = function (name) {
 			}
 			for (var i = 0; i < json.layers.length; i++) {
 				var array = json.layers[i].data;
-				var name = json.layers[i].name
+				var name = json.layers[i].name;
 				var data = convertArray(array, json.layers[i].width);
 				map.buildLayer(data, name);
 			}
@@ -47,6 +47,7 @@ Map.prototype.buildLayer = function (dataInput, layer) {
 	var GOALLAYER = "goal";
 	var KILLLAYER = "kill";
 	var OTHERLAYER = "other";
+	var BACKLAYER = "back";
 	var collision = false;
 	var Sprites = this.sprites;
 	switch (layer) {
@@ -57,19 +58,20 @@ Map.prototype.buildLayer = function (dataInput, layer) {
 		collision = true;
 		break;
 	case GOALLAYER:
-		Sprites.goalObjects = [];
+		Sprites.goalObjects = new Array();
 		layer = Sprites.goalObjects;
-		collision = false;
 		break;
 	case KILLLAYER:
-		Sprites.killObjects = [];
+		Sprites.killObjects = new Array();
 		layer = Sprites.killObjects;
-		collision = false;
 		break;
 	case OTHERLAYER:
-		Sprites.otherObjects = [];
+		Sprites.otherObjects = new Array();
 		layer = Sprites.otherObjects;
-		collision = false;
+		break;
+	case BACKLAYER:
+		Sprites.backObjects = new Array();
+		layer = Sprites.backObjects;
 		break;
 	default:
 		logger.warn("Layer unknown! Layer: " + layer);
