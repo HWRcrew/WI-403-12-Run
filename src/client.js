@@ -318,7 +318,10 @@ window.addEventListener("load", function () {
 	Connection.onopen = function () {
 		// prompt for name and send to server (max length 16 chars)
 		if (Connection && Connection.readyState == 1) {
-			var name = window.prompt("Tell me your name...");
+			var name;
+			do {
+				name = window.prompt("Tell me your name...");
+			} while (!name)
 			Connection.send(JSON.stringify({
 				Type: "handshake",
 				Data: name.substring(0, 16)
@@ -479,13 +482,7 @@ function DrawGame() {
 			GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x - camera.xView, sprite.y - camera.yView, sprite.sourceWidth, sprite.sourceHeight);
 		}
 	}
-	// draw otherObjects[]
-	if (Sprites.Map.sprites.otherObjects) {
-		for (var i = 0; i < Sprites.Map.sprites.otherObjects.length; i++) {
-			sprite = Sprites.Map.sprites.otherObjects[i];
-			GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x - camera.xView, sprite.y - camera.yView, sprite.sourceWidth, sprite.sourceHeight);
-		}
-	}
+
 	// draw Players[]
 
 	/*
@@ -536,10 +533,17 @@ function DrawGame() {
 		if (Sprites.Players[i].Name) {
 			// Decide wether it is me or someone else
 			if (Sprites.Players[i] == MyPlayer) {
-				GraphicsContext.fillText("Le Me " + Sprites.Players[i].stunDuration, Sprites.Players[i].x - camera.xView, Sprites.Players[i].y - camera.yView);
+				GraphicsContext.fillText("Le Me ", Sprites.Players[i].x - camera.xView, Sprites.Players[i].y - camera.yView);
 			} else {
 				GraphicsContext.fillText(Sprites.Players[i].Name, Sprites.Players[i].x - camera.xView, Sprites.Players[i].y - camera.yView);
 			}
+		}
+	}
+	// draw otherObjects[]
+	if (Sprites.Map.sprites.otherObjects) {
+		for (var i = 0; i < Sprites.Map.sprites.otherObjects.length; i++) {
+			sprite = Sprites.Map.sprites.otherObjects[i];
+			GraphicsContext.drawImage(TileImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x - camera.xView, sprite.y - camera.yView, sprite.sourceWidth, sprite.sourceHeight);
 		}
 	}
 };
