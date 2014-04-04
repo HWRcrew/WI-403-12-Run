@@ -166,4 +166,4 @@ pip-log.txt
 *.log
 
 # node
-node_modules
+node_modules/
