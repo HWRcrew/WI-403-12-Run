@@ -7,7 +7,6 @@ var WebSocketServer = require("websocket").server;
 var Game = require("./game.js");
 var helpers = require("./helpers");
 var Map = require('./map.js');
-console.log(Map);
 // Port
 var port = 1337;
 // Object to store Connections
@@ -33,7 +32,6 @@ var Server = new WebSocketServer({
 // build map
 var ActualMap = new Map("map1");
 ActualMap.buildMap();
-console.log("actual asdf" + JSON.stringify(ActualMap));
 Sprites.Map = ActualMap;
 
 // ACTION
