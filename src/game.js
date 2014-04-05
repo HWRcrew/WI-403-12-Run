@@ -57,6 +57,9 @@ var halfHeight = function (object) {
     return object.height / 2;
 };
 
+
+var timerCounter = true;
+
 function RunGameFrame(Sprites) {
     for (var i = 0; i < Sprites.Players.length; i++) {
         var CurrentPlayer = Sprites.Players[i];
@@ -164,6 +167,10 @@ function RunGameFrame(Sprites) {
                 var collisionSide = collisionDetectionWithoutCollision(CurrentPlayer, object, false);
                 if (collisionSide != "none") {
                     //TODO Starttimer!
+                    if (timerCounter) {
+                        timerCounter = false;
+                        var counter = setInterval(timer, 1000);
+                    }
                 }
             }
         }
@@ -191,6 +198,14 @@ function RunGameFrame(Sprites) {
         }
     }
 };
+
+var count = 0;
+
+function timer() {
+    count = count + 1;
+    document.getElementById("timer").innerHTML = count + " secs";
+}
+
 /**
  * Detect collisionSide between two objects
  * @return collisionSide
