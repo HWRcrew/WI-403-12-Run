@@ -22,7 +22,10 @@ var GameCanvas;
 
 draw = function (sprite, context, sourceImage, camera) {
     context.save();
+    // if sprite out of view do not paint it 
+    //    if (sprite.x - camera.xView > (-GP.tileBlockSize) || sprite.y - camera.yView > (-GP.tileBlockSize) || (sprite.x - camera.xView) < (camera.viewportRect.width /*+ GP.tileBlockSize*/ ) || (sprite.y - camera.yView) < (camera.viewportRect.height /*+ GP.tileBlockSize*/ )) {
     context.drawImage(sourceImage, sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight, sprite.x - camera.xView, sprite.y - camera.yView, sprite.sourceWidth, sprite.sourceHeight);
+    //    }
     context.restore();
 };
 //Rectangle constructor
@@ -419,7 +422,7 @@ window.addEventListener("load", function () {
     };
     // error of connection
     Connection.onerror = function (error) {
-        alert("WebSocket error occured: \n\n" + JSON.stringify(error));
+        alert("WebSocket error occured!");
     };
     // close of connection
     Connection.onclose = function () {
