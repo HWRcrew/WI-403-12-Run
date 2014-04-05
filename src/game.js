@@ -154,6 +154,14 @@ function RunGameFrame(Sprites) {
                 CurrentPlayer.y = 0;
             }
         }
+        // check for collision with startObjects
+        for (var j = 0; j < Sprites.Map.sprites.startObjects.length; j++) {
+            var object = Sprites.Map.sprites.startObjects[j];
+            var collisionSide = collisionDetectionWithoutCollision(CurrentPlayer, object, false);
+            if (collisionSide != "none") {
+                //TODO Starttimer!
+            }
+        }
         // Limit for World with bounce effect
         // Left
         if (CurrentPlayer.x < 0) {
@@ -227,6 +235,51 @@ function collisionDetection(o1, o2, bounce) {
                 // bounce back when moving against second object
                 if (bounce) {
                     o1.vx *= GP.GameBounce;
+                }
+            }
+        } else {
+            collisionSide = "none";
+        }
+    } else {
+        collisionSide = "none";
+    }
+    return collisionSide;
+}
+
+//collision with startObjects "without any collision"
+function collisionDetectionWithoutCollision(o1, o2, bounce) {
+    if (typeof bounce === "undefined") {
+        bounce = false;
+    }
+    var collisionSide = "";
+    // distance vector
+    var vectorX = centerX(o1) - centerX(o2);
+    var vectorY = centerY(o1) - centerY(o2);
+    // combined half-widths and half-heights
+    var combinedHalfWidths = halfWidth(o1) + halfWidth(o2);
+    var combinedHalfHeights = halfHeight(o1) + halfHeight(o2);
+    // check for collision side
+    if (Math.abs(vectorX) < combinedHalfWidths) {
+        // a collision might be occurring
+        if (Math.abs(vectorY) < combinedHalfHeights) {
+            // collision occured
+            // find out the overlap size
+            var overlapX = combinedHalfWidths - Math.abs(vectorX);
+            var overlapY = combinedHalfHeights - Math.abs(vectorY);
+            // collision occured on the axis with smallest amount of overlap
+            if (overlapX >= overlapY) {
+                // collision on X-Axis
+                if (vectorY > 0) {
+                    collisionSide = "top";
+                } else {
+                    collisionSide = "bottom";
+                }
+            } else {
+                // collision on Y-Axis
+                if (vectorX > 0) {
+                    collisionSide = "left";
+                } else {
+                    collisionSide = "right";
                 }
             }
         } else {
