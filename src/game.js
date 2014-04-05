@@ -155,11 +155,16 @@ function RunGameFrame(Sprites) {
             }
         }
         // check for collision with startObjects
-        for (var j = 0; j < Sprites.Map.sprites.startObjects.length; j++) {
-            var object = Sprites.Map.sprites.startObjects[j];
-            var collisionSide = collisionDetectionWithoutCollision(CurrentPlayer, object, false);
-            if (collisionSide != "none") {
-                //TODO Starttimer!
+
+        var startObj = Sprites.Map.sprites.startObjects;
+
+        if (startObj != null) {
+            for (var j = 0; j < Sprites.Map.sprites.startObjects.length; j++) {
+                var object = Sprites.Map.sprites.startObjects[j];
+                var collisionSide = collisionDetectionWithoutCollision(CurrentPlayer, object, false);
+                if (collisionSide != "none") {
+                    //TODO Starttimer!
+                }
             }
         }
         // Limit for World with bounce effect
