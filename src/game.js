@@ -38,6 +38,7 @@ function spriteObject() {
     // Time for a one maprun in seconds
     // TODO store at Connection?
     this.Time = null,
+    this.Timer = false,
     // stunDuration in seconds
     this.stunDuration = 0,
     this.stunTime = 0,
@@ -57,8 +58,6 @@ var halfHeight = function (object) {
     return object.height / 2;
 };
 
-
-var timerCounter = true;
 
 function RunGameFrame(Sprites) {
     for (var i = 0; i < Sprites.Players.length; i++) {
@@ -166,9 +165,10 @@ function RunGameFrame(Sprites) {
                 var object = Sprites.Map.sprites.startObjects[j];
                 var collisionSide = collisionDetectionWithoutCollision(CurrentPlayer, object, false);
                 if (collisionSide != "none") {
-                    //TODO Starttimer!
-                    if (timerCounter) {
-                        timerCounter = false;
+                    //TODO Starttimer
+                    if (CurrentPlayer.Timer == false) {
+                        CurrentPlayer.Time = new Date();
+                        CurrentPlayer.Timer = true;
                         var counter = setInterval(timer, 1000);
                     }
                 }
