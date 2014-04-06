@@ -58,6 +58,7 @@ var halfHeight = function (object) {
     return object.height / 2;
 };
 
+var startTime = null;
 
 function RunGameFrame(Sprites) {
     for (var i = 0; i < Sprites.Players.length; i++) {
@@ -168,8 +169,9 @@ function RunGameFrame(Sprites) {
                     //TODO Starttimer
                     if (CurrentPlayer.Timer == false) {
                         CurrentPlayer.Time = new Date();
+                        startTime = CurrentPlayer.Time;
                         CurrentPlayer.Timer = true;
-                        var counter = setInterval(timer, 1000);
+                        var counter = setInterval(timer, 10);
                     }
                 }
             }
@@ -199,11 +201,28 @@ function RunGameFrame(Sprites) {
     }
 };
 
-var count = 0;
-
+/**
+ *Starts Timer, calculates Differenz between the
+ *Time the Timer has started and now.
+ *Formates the Time into Minutes:Seconds:Milliseconds
+ */
 function timer() {
-    count = count + 1;
-    document.getElementById("timer").innerHTML = count + " secs";
+    var time = formatTime(Date.now() - startTime);
+    document.getElementById("timer").innerHTML = time;
+}
+
+function formatTime(elapsed) {
+    var hours, minutes, seconds, milis;
+
+    minutes = Math.floor(elapsed / (60 * 1000));
+    elapsed -= minutes * 60 * 1000;
+
+    seconds = Math.floor(elapsed / 1000);
+    elapsed -= seconds * 1000;
+
+    milis = Math.floor(elapsed / 100);
+
+    return minutes + ':' + seconds + ':' + milis;
 }
 
 /**
