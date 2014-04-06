@@ -59,6 +59,7 @@ var halfHeight = function (object) {
 };
 
 var startTime = null;
+var counter = null;
 
 function RunGameFrame(Sprites) {
     for (var i = 0; i < Sprites.Players.length; i++) {
@@ -166,13 +167,28 @@ function RunGameFrame(Sprites) {
                 var object = Sprites.Map.sprites.startObjects[j];
                 var collisionSide = collisionDetectionWithoutCollision(CurrentPlayer, object, false);
                 if (collisionSide != "none") {
-                    //TODO Starttimer
+                    //Start Timer
                     if (CurrentPlayer.Timer == false) {
                         CurrentPlayer.Time = new Date();
                         startTime = CurrentPlayer.Time;
                         CurrentPlayer.Timer = true;
-                        var counter = setInterval(timer, 10);
+                        counter = setInterval(timer, 10);
                     }
+                }
+            }
+        }
+
+        //check collision with goalObjects
+
+        var goalObj = Sprites.Map.sprites.goalObjects;
+
+        if (goalObj != null) {
+            for (var j = 0; j < Sprites.Map.sprites.goalObjects.length; j++) {
+                var object = Sprites.Map.sprites.goalObjects[j];
+                var collisionSide = collisionDetectionWithoutCollision(CurrentPlayer, object, false);
+                if (collisionSide != "none") {
+                    //TODO Stop Timer
+                    clearInterval(counter);
                 }
             }
         }

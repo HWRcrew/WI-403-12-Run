@@ -435,7 +435,6 @@ window.addEventListener("load", function () {
     };
 });
 
-
 // Function for drawing of the current Game-State
 var counterRight = 1;
 var counterLeft = 14;
