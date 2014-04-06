@@ -224,7 +224,7 @@ function RunGameFrame(Sprites) {
  */
 function timer() {
     var time = formatTime(Date.now() - startTime);
-    document.getElementById("timer").innerHTML = time;
+    drawTimer(time);
 }
 
 function formatTime(elapsed) {

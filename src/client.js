@@ -553,3 +553,7 @@ function DrawGame() {
         }
     }
 };
+
+function drawTimer(time) {
+    document.getElementById("timer").innerHTML = time;
+}
