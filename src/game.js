@@ -192,17 +192,17 @@ function RunGameFrame(Sprites) {
                 }
             }
         }
-        // Limit for World with bounce effect
+        // Limit for Map with bounce effect
         // Left
         if (CurrentPlayer.x < 0) {
             CurrentPlayer.vx *= GP.GameBounce;
             CurrentPlayer.x = 0;
         }
         //Top
-        if (CurrentPlayer.y < 0) {
-            CurrentPlayer.vy *= GP.GameBounce;
-            CurrentPlayer.y = 0;
-        }
+        //        if (CurrentPlayer.y < 0) {
+        //            CurrentPlayer.vy *= GP.GameBounce;
+        //            CurrentPlayer.y = 0;
+        //        }
         //Right
         if ((CurrentPlayer.x + CurrentPlayer.width) > Sprites.Map.width) {
             CurrentPlayer.vx *= GP.GameBounce;
