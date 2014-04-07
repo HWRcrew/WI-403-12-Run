@@ -231,9 +231,15 @@ function formatTime(elapsed) {
     var hours, minutes, seconds, milis;
 
     minutes = Math.floor(elapsed / (60 * 1000));
+    if (minutes <= 9) {
+        minutes = "0" + minutes;
+    }
     elapsed -= minutes * 60 * 1000;
 
     seconds = Math.floor(elapsed / 1000);
+    if (seconds <= 9) {
+        seconds = "0" + seconds;
+    }
     elapsed -= seconds * 1000;
 
     milis = Math.floor(elapsed / 100);
