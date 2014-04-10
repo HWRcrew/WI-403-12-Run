@@ -1,4 +1,4 @@
-{ "backgroundcolor":"#000019",
+{ "backgroundcolor":"#c3eef3",
  "height":200,
  "layers":[
         {
@@ -88,7 +88,7 @@
         {
          "firstgid":1,
          "image":"..\/images\/tiles.png",
-         "imageheight":256,
+         "imageheight":288,
          "imagewidth":288,
          "margin":0,
          "name":"tiles",
