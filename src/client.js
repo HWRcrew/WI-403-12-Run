@@ -348,7 +348,10 @@ window.addEventListener("load", function () {
                     GraphicsContext.drawImage(img, 0, 0, 768, 384);
                     if (camera && MyPlayer) {
                         camera.follow(MyPlayer, GameCanvas.width / 2, GameCanvas.height / 2);
-                        clientState = "playing";
+                        setTimeout(function () {
+                            clientState = "playing";
+                            document.getElementById("timer").style.visibility = "visible";
+                        }, 3000);
                     }
                 }
             }
