@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width = device-width, initial-scale=1 maximum-scale=1 user-scalable=0" />
     <!-- iOS  -->
@@ -20,94 +21,98 @@
     <script src="game.js" type="text/javascript" charset="utf-8"></script>
     <script src="client.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
-    
-    var landscape = false;
-    var portrait = false;
-    var iPad = false;
-    var iPhone = false;
+        var landscape = false;
+        var portrait = false;
+        var iPad = false;
+        var iPhone = false;
 
-    function detectUserAgent(){      
+        function detectUserAgent() {
 
-      if(navigator.userAgent.match(/iPhone/i)){
-        iPhone = true;
-        console.log("iPhone");
-      } 
-      if(navigator.userAgent.match(/iPad/i)){
-        iPad = true;
-        console.log("iPad");
-      }
-
-      readDeviceOrientation();                    
-
-    }
-
-    function readDeviceOrientation() {
-      // alert("inside readDeviceOrientation");
-      if (Math.abs(window.orientation) === 90) {
-        // Landscape
-        landscape = true;
-        // alert("landscape");
-        if(iPad){
-          switchOrientation("ipad-landscape");
-        }
-        if(iPhone){
-          switchOrientation("iphone-landscape");
-        }
-      } else {
-        // Portrait
-        portrait = true;
-        // alert("portrait");
-        if(iPad){
-          switchOrientation("ipad-portrait");
-        }
-        if(iPhone){
-          switchOrientation("iphone-portrait");
-        }
-      }
-    }
-
-    function switchOrientation(s){
-      // alert("inside switchOrientation");
-        var stylesheet = document.getElementsByTagName("link");
-        for (var i = 0; i < stylesheet.length; i++ ) {
-          if (stylesheet[i].getAttribute("rel").indexOf("stylesheet") != -1 && stylesheet[i].getAttribute("title")) {
-            stylesheet[i].disabled = true;
-            // alert("something disabled");
-            if (stylesheet[i].getAttribute("title") == s) {
-              stylesheet[i].disabled = false;
-              // alert("something enabled");
+            if (navigator.userAgent.match(/iPhone/i)) {
+                iPhone = true;
+                console.log("iPhone");
             }
-          }
+            if (navigator.userAgent.match(/iPad/i)) {
+                iPad = true;
+                console.log("iPad");
+            }
+
+            readDeviceOrientation();
+
         }
-    }
 
-    window.onorientationchange = readDeviceOrientation;
+        function readDeviceOrientation() {
+            // alert("inside readDeviceOrientation");
+            if (Math.abs(window.orientation) === 90) {
+                // Landscape
+                landscape = true;
+                // alert("landscape");
+                if (iPad) {
+                    switchOrientation("ipad-landscape");
+                }
+                if (iPhone) {
+                    switchOrientation("iphone-landscape");
+                }
+            } else {
+                // Portrait
+                portrait = true;
+                // alert("portrait");
+                if (iPad) {
+                    switchOrientation("ipad-portrait");
+                }
+                if (iPhone) {
+                    switchOrientation("iphone-portrait");
+                }
+            }
+        }
 
+        function switchOrientation(s) {
+            // alert("inside switchOrientation");
+            var stylesheet = document.getElementsByTagName("link");
+            for (var i = 0; i < stylesheet.length; i++) {
+                if (stylesheet[i].getAttribute("rel").indexOf("stylesheet") != -1 && stylesheet[i].getAttribute("title")) {
+                    stylesheet[i].disabled = true;
+                    // alert("something disabled");
+                    if (stylesheet[i].getAttribute("title") == s) {
+                        stylesheet[i].disabled = false;
+                        // alert("something enabled");
+                    }
+                }
+            }
+        }
+
+        window.onorientationchange = readDeviceOrientation;
     </script>
     <style type="text/css" media="screen">
-    html, body {
-    margin: 0px;
-    padding: 0px;
-    height: 100%;
-    overflow: hidden; }
-    :webkit-full-screen {
-    width: 100%;
-    height: 100%;
-    }
-    -webkit-user-select: none;
+        html,
+        body {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            overflow: hidden;
+        }
+        :webkit-full-screen {
+            width: 100%;
+            height: 100%;
+        }
+        -webkit-user-select:none;
     </style>
-  </head>
-  <body onload="detectUserAgent();">
+</head>
+
+<body onload="detectUserAgent();">
     <div id="wrapper">
-      <canvas id="canvas" style="border: 5px solid black">
-      <p>Your Browser does not support canvas!</p>
-      </canvas>
-      <div id="leftControls" style="float: right; position: relative; right: 20px; bottom: 100px">
-        <img id="jumpButton" src="images/up.png" style="height:64px; width:64px"" alt="JUMP">
+        <img src="images/loading.png" id="loadingImg" style="display:none;">
+        <span id="timer" style="position: absolute; margin: 20px;font-family: monospace;
+font-size: xx-large; visibility: hidden;">00:00:0</span>
+        <canvas id="canvas" style="border: 5px solid black">
+            <p>Your Browser does not support canvas!</p>
+        </canvas>
+        <div id="leftControls" style="float: right; position: relative; right: 20px; bottom: 100px">
+            <img id="jumpButton" src="images/up.png" style="height:64px; width:64px" " alt="JUMP ">
       </div>
-      <div id="rightControls" style="float: left; position: relative; left: 20px;bottom: 100px">
-        <img id="leftButton" src="images/left.png" style="margin-right:20px; height:64px; width:64px" alt="LEFT">
-        <img id="rightButton" src="images/right.png" style="margin-left:20px; height:64px; width:64px" alt="RIGHT">
+      <div id="rightControls " style="float: left; position: relative; left: 20px;bottom: 100px ">
+        <img id="leftButton " src="images/left.png " style="margin-right:20px; height:64px; width:64px " alt="LEFT ">
+        <img id="rightButton " src="images/right.png " style="margin-left:20px; height:64px; width:64px " alt="RIGHT ">
       </div>
     </div>
   </body>
