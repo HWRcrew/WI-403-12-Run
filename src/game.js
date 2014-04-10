@@ -115,6 +115,9 @@ function RunGameFrame(Sprites) {
             if (j == i) {
                 continue;
             }
+            if (CurrentPlayer.Timer === false) {
+                break;
+            }
             var opponent = Sprites.Players[j];
             var collisionSide = collisionDetection(CurrentPlayer, opponent, true);
             if (collisionSide == "bottom") {
