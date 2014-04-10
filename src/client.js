@@ -20,6 +20,10 @@ var rightButton;
 var camera;
 var GameCanvas;
 
+//Timer Variables
+var start = null;
+var interval = null;
+
 draw = function (sprite, context, sourceImage, camera) {
     context.save();
     // if sprite out of view do not paint it 
@@ -340,6 +344,8 @@ window.addEventListener("load", function () {
 
                     GraphicsContext = GameCanvas.getContext("2d");
                     camera = new Game.Camera(0, 0, GameCanvas.width, GameCanvas.height, Sprites.Map.width, Sprites.Map.height);
+                    var img = document.getElementById("loadingImg");
+                    GraphicsContext.drawImage(img, 0, 0, 768, 384);
                     if (camera && MyPlayer) {
                         camera.follow(MyPlayer, GameCanvas.width / 2, GameCanvas.height / 2);
                         clientState = "playing";
@@ -392,6 +398,17 @@ window.addEventListener("load", function () {
                 RunGameFrame(Sprites);
                 camera.update();
                 DrawGame();
+                if (MyPlayer.Timer == true) {
+                    if (MyPlayer.startTime != null) {
+                        start = MyPlayer.startTime;
+                        timer();
+                    }
+                }
+                if (MyPlayer.Timer == false) {
+                    if (MyPlayer.endTime != null) {
+                        end = MyPlayer.endTime;
+                    }
+                }
             }
         }, GP.GameFrameTime);
     };
@@ -554,6 +571,29 @@ function DrawGame() {
     }
 };
 
-function drawTimer(time) {
+function timer() {
+    var now = Date.now();
+    var time = formatTime(now - start);
     document.getElementById("timer").innerHTML = time;
+
+}
+
+function formatTime(elapsed) {
+    var hours, minutes, seconds, milis;
+
+    minutes = Math.floor(elapsed / (60 * 1000));
+    if (minutes <= 9) {
+        minutes = "0" + minutes;
+    }
+    elapsed -= minutes * 60 * 1000;
+
+    seconds = Math.floor(elapsed / 1000);
+    if (seconds <= 9) {
+        seconds = "0" + seconds;
+    }
+    elapsed -= seconds * 1000;
+
+    milis = Math.floor(elapsed / 100);
+
+    return minutes + ':' + seconds + ':' + milis;
 }

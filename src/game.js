@@ -37,8 +37,9 @@ function spriteObject() {
     this.Col = null,
     // Time for a one maprun in seconds
     // TODO store at Connection?
-    this.Time = null,
     this.Timer = false,
+    this.startTime = null,
+    this.endTime = null,
     // stunDuration in seconds
     this.stunDuration = 0,
     this.stunTime = 0,
@@ -58,8 +59,8 @@ var halfHeight = function (object) {
     return object.height / 2;
 };
 
-var startTime = null;
-var counter = null;
+//var startTime = null;
+//var counter = null;
 
 function RunGameFrame(Sprites) {
     for (var i = 0; i < Sprites.Players.length; i++) {
@@ -169,10 +170,8 @@ function RunGameFrame(Sprites) {
                 if (collisionSide != "none") {
                     //Start Timer
                     if (CurrentPlayer.Timer == false) {
-                        CurrentPlayer.Time = new Date();
-                        startTime = CurrentPlayer.Time;
+                        CurrentPlayer.startTime = Date.now();
                         CurrentPlayer.Timer = true;
-                        counter = setInterval(timer, 10);
                     }
                 }
             }
@@ -187,8 +186,11 @@ function RunGameFrame(Sprites) {
                 var object = Sprites.Map.sprites.goalObjects[j];
                 var collisionSide = collisionDetectionWithoutCollision(CurrentPlayer, object, false);
                 if (collisionSide != "none") {
-                    //TODO Stop Timer
-                    clearInterval(counter);
+                    //Stop Timer
+                    if (CurrentPlayer.Timer == true) {
+                        CurrentPlayer.endTime = Date.now();
+                        CurrentPlayer.Timer = false;
+                    }
                 }
             }
         }
@@ -222,30 +224,7 @@ function RunGameFrame(Sprites) {
  *Time the Timer has started and now.
  *Formates the Time into Minutes:Seconds:Milliseconds
  */
-function timer() {
-    var time = formatTime(Date.now() - startTime);
-    drawTimer(time);
-}
 
-function formatTime(elapsed) {
-    var hours, minutes, seconds, milis;
-
-    minutes = Math.floor(elapsed / (60 * 1000));
-    if (minutes <= 9) {
-        minutes = "0" + minutes;
-    }
-    elapsed -= minutes * 60 * 1000;
-
-    seconds = Math.floor(elapsed / 1000);
-    if (seconds <= 9) {
-        seconds = "0" + seconds;
-    }
-    elapsed -= seconds * 1000;
-
-    milis = Math.floor(elapsed / 100);
-
-    return minutes + ':' + seconds + ':' + milis;
-}
 
 /**
  * Detect collisionSide between two objects
