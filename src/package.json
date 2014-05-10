@@ -1,0 +1,9 @@
+{
+    "name": "wi-403-12-Run",
+	"description": "A multiplayer jump and run",
+	"main": "server.js",
+	"dependencies" : {
+		"websocket": "latest",
+		"winston": "latest",
+	}
+}
