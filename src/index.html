@@ -13,15 +13,22 @@
     <link rel="stylesheet" href="fancybox/jquery.fancybox-1.3.4.css" type="text/css" media="screen" />
     <script type="text/javascript">
         $(document).ready(function() {
-
-            /* Using custom settings */
-
             $("a#inline").fancybox({
                 'hideOnContentClick': true
             });
-
         });
     </script>
+    <style>
+        p {
+            width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            font-family: fantasy;
+        }
+        h2 {
+            font-family: fantasy;
+        }
+    </style>
 </head>
 
 <body style="text-align:center">
@@ -35,7 +42,18 @@ font-size: xx-large; visibility: hidden;">00:00:0</span>
         <img src="images/question.png" height="50px" width="auto">
     </a>
     <div style="display:none">
-        <div id="data">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+        <div id="data">
+            <p>
+                <h2>Willkommen bei Staffrace!</h2>
+            </p>
+            <p>Ziel des Spiels ist es, die Ausgangstür am Ende der Welt schnellstmöglich zu erreichen. Beim ersten Durchlaufen der Flagge wird ein Timer gestartet, welcher die benötigte Durchlaufzeit festhält.
+            </p>
+            <p>Um die Spielfigur zu bewegen nutzen Sie die Pfeiltasten. Hindernisse können durch Druck auf den Nach-Oben-Pfeil übersprungen werden. Werden jedoch Objekte wie Stacheln berührt oder fällt die Figur in Wasser oder Lava, wird die Spielfigur wieder an den Anfang der Welt zurückgesetzt.
+            </p>
+            <p>Andere Spielfiguren können durch einen Sprung auf deren Kopf kurzzeitig blockiert werden. Erst nach Ablauf einer kurzen Zeitspanne kann man die Figur wieder bewegen. Somit ist es möglich, andere Spieler am frühzeitigen Erreichen des Ziels zu hindern oder auch ihre Sprünge zu blockieren.
+            </p>
+            <p>Viel Spaß beim Spiel!</p>
+        </div>
     </div>
 </body>
 
