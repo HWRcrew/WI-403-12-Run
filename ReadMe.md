@@ -12,3 +12,6 @@ Dieses Spiel ist ein Jump'N'Run bei dem bis zu 4 Spieler gegeneinander antreten 
 Die Umsetzung erfolgt in Javascript. Für die Synchronisation der Daten zwischen den Nutzern wird PHP in Verbindung mit einer MySQL-Datenbank genutzt.
 
 Der Javascript-Quellcode wird über Unit-Tests mit QUnit getestet.
+
+Installation von Dependencies im src-Verzeichnis mit:
+npm install
